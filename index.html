@@ -8,7 +8,7 @@
 <script src="config.js"></script><script src="cloud.js" defer></script>
 <script src="milk.js" defer></script>
 <style>
-:root{--bg:#f4ede6;--surface:#fffaf4;--sunk:#efe5da;--ink:#2a1d16;--muted:#76645a;--line:#e2d4c7;--crema:#b8732a;--crema-soft:#f1dfc6;--on-crema:#fff8ef;--good:#3d7a4c;--warn:#a87a06;--bad:#c4472b;
+:root{--bg:#f4ede6;--surface:#fffaf4;--sunk:#efe5da;--ink:#2a1d16;--muted:#6b5a50;--line:#e2d4c7;--crema:#985718;--crema-soft:#f1dfc6;--on-crema:#fff8ef;--good:#2c6439;--warn:#765600;--bad:#c4472b;
 --display:"Fraunces",Georgia,serif;--body:"Work Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17110d;--surface:#211812;--sunk:#1a130e;--ink:#f2e6db;--muted:#ab968a;--line:#3a2c23;--crema:#e09a4a;--crema-soft:#3a2716;--on-crema:#1d120b;--good:#6cb67e;--warn:#e8bd3a;--bad:#ef7a5c;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#17110d;--surface:#211812;--sunk:#1a130e;--ink:#f2e6db;--muted:#ab968a;--line:#3a2c23;--crema:#e09a4a;--crema-soft:#3a2716;--on-crema:#1d120b;--good:#6cb67e;--warn:#e8bd3a;--bad:#ef7a5c;color-scheme:dark}
@@ -391,7 +391,7 @@ function cupSVG(d){const k=CUPS[d.cup]||CUPS.cup,id="cup"+(++cupN),fillTop=k.top
   const lid=k.lid?`<rect x="70" y="14" width="60" height="9" rx="3" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.2"/><rect x="76" y="50" width="48" height="22" fill="var(--crema)" opacity=".85"/>`:"";
   const shine=k.glass?`<path d="M${+k.body.match(/M(\d+)/)[1]+6} ${k.top+8}l-2 ${(k.bot-k.top)*0.6}" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round" fill="none"/>`:"";
   const steam=!d.iced&&!k.lid?`<g class="steamA" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M93 ${k.top-6}c-4-5 4-8 0-13"/><path d="M106 ${k.top-4}c-4-5 4-8 0-13"/></g>`:"";
-  return `<svg viewBox="0 0 200 120" aria-hidden="true"><defs><clipPath id="${id}"><path d="${k.body}"/></clipPath></defs>${sau}${handle}<path d="${k.body}" fill="${k.glass?"color-mix(in srgb,var(--surface) 55%,transparent)":"var(--surface)"}"/><g clip-path="url(#${id})">${out}</g>${shine}${lid}<path d="${k.body}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>${steam}</svg>`}
+  return `<svg viewBox="0 0 200 120" aria-hidden="true"><defs><clipPath id="${id}"><path d="${k.body}"/></clipPath></defs>${sau}${handle}<path d="${k.body}" fill="var(--surface)" fill-opacity="${k.glass?".55":"1"}"/><g clip-path="url(#${id})">${out}</g>${shine}${lid}<path d="${k.body}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>${steam}</svg>`}
 
 // Templates: d = drink. dose = coffee g, yield = espresso g, milk ml, powder g (matcha/chai/cocoa), extra € (syrup etc.)
 const D=(key,o)=>Object.assign({key,cup:"cup",iced:false,dose:0,yield:0,time:"",milk:0,powder:0,powderPrice:0,extra:0,price:0,size:"",layers:[],amt:[],steps:[]},o);
@@ -1107,4 +1107,7 @@ function installBar(o){
 }
 
 installBar({name:"Café Lab Business",url:"https://tmdpereira2002-cmyk.github.io/cafe-lab-business/",getDeferred:()=>deferredInstall,clearDeferred:()=>{deferredInstall=null},t:T,place:el=>{const h=document.querySelector("header");h.insertAdjacentElement("afterend",el);el.style.margin="12px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))"}});
-</script></body></html>
+</script><script>/* older phones: pop-ups without <dialog> support */
+(function(){if(typeof HTMLDialogElement!=="function"){document.documentElement.classList.add("noDialog");document.querySelectorAll("dialog").forEach(function(d){d.showModal=d.show=function(){d.setAttribute("open","")};d.close=function(){d.removeAttribute("open");d.dispatchEvent(new Event("close"))}})}})();</script>
+<style>.noDialog dialog[open]{position:fixed;left:0;right:0;top:0;bottom:0;margin:auto;z-index:60;display:block;max-height:90vh;overflow:auto;box-shadow:0 0 0 100vmax rgba(20,10,5,.5)}.noDialog dialog:not([open]){display:none}</style>
+</body></html>
