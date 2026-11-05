@@ -6,6 +6,7 @@
 <title>Café Lab Business</title>
 <link rel="stylesheet" href="fonts.css">
 <script src="config.js"></script><script src="cloud.js" defer></script>
+<script src="milk.js" defer></script>
 <style>
 :root{--bg:#f4ede6;--surface:#fffaf4;--sunk:#efe5da;--ink:#2a1d16;--muted:#76645a;--line:#e2d4c7;--crema:#b8732a;--crema-soft:#f1dfc6;--on-crema:#fff8ef;--good:#3d7a4c;--warn:#a87a06;--bad:#c4472b;
 --display:"Fraunces",Georgia,serif;--body:"Work Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
@@ -106,6 +107,8 @@ header img{animation:wiggle 1.1s .3s ease-in-out both}
 #loginGate{position:fixed;inset:0;z-index:100;background:var(--bg);overflow:auto;display:flex;justify-content:center;padding:max(24px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
 .lgBox{width:100%;max-width:400px;display:flex;flex-direction:column;gap:8px;margin:auto 0}.lgLogo{align-self:center;border-radius:18px;box-shadow:0 8px 24px rgba(40,20,10,.18)}#loginGate h1{text-align:center;font-size:26px}
 body.gated{overflow:hidden}
+.kchips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.kchips::-webkit-scrollbar{display:none}.kchip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:7px 14px;font:500 14px var(--body);min-height:38px;cursor:pointer}.kchip[aria-pressed="true"]{background:var(--crema);border-color:var(--crema);color:var(--on-crema)}
+#dlgBody .mgNav button{border:0;border-radius:12px;padding:10px;font:600 15px var(--body);min-height:44px;cursor:pointer;background:var(--crema);color:var(--on-crema)}#dlgBody .mgNav button.ghost{background:transparent;color:var(--crema);border:1px solid var(--line)}#dlgBody .mgNav button:disabled{opacity:.4}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 .calcH{display:flex;align-items:center;gap:10px}.cico{width:40px;height:40px;flex:none;border-radius:12px;background:var(--crema-soft);display:grid;place-items:center}.cico svg{width:32px;height:32px}
@@ -514,9 +517,11 @@ VIEWS.path=()=>{
 function openLesson(me,k){const les=LESSONS[k],[t,d]=SKILLS[k],opt=isOpt(k),bl=bonusLine(k),pos=opt?[...OPTIONAL].indexOf(k):REQ.indexOf(k),tot=opt?OPTIONAL.size:REQ.length;
  openDlg("",`<p class="hint" style="margin:0">${opt?T("Optional skill","Optionele vaardigheid"):T("Skill","Vaardigheid")} ${pos+1} ${T("of","van")} ${tot}</p><h2>${L(t)}</h2><p class="hint" style="margin:0">${T("Goal","Doel")}: ${L(d)}</p>
  ${opt?`<div class="out">${T("Study this in your own time, not during your shift.","Leer dit in je eigen tijd, niet tijdens je dienst.")}${bl?` <b>${T("Reward","Beloning")}: ${bl}.</b>`:""}${k===SKILLS.length-1?` <button type="button" class="ghost" id="goKnow" style="margin-top:8px">${T("Open Coffee knowledge","Open Koffiekennis")}</button>`:""}</div>`:""}
+ ${[7,8,9].includes(k)?`<button type="button" class="btn" id="goMilk">${T("Open the step-by-step steaming guide","Open de stap-voor-stap opschuimgids")}</button>`:""}
  <h3>${T("What to know","Wat je moet weten")}</h3><ul>${les.learn.map(x=>`<li>${L(x)}</li>`).join("")}</ul>
  ${me?`<h3>${T("Test","Test")} · ${les.quiz.length} ${T("questions","vragen")}</h3>${les.quiz.map((q,i)=>`<fieldset id="q${i}" style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0"><legend style="font-weight:600;padding:0 4px">${i+1}. ${L(q.q)}</legend>${q.a.map((a,j)=>`<label class="row" style="flex-wrap:nowrap;gap:10px;padding:5px 0;cursor:pointer"><input type="radio" name="q${i}" value="${j}" style="width:20px;height:20px;min-height:0;flex:none">${L(a)}</label>`).join("")}<p class="hint" data-fb="${i}" style="margin:4px 0 0" hidden></p></fieldset>`).join("")}
  <p id="qRes" hidden></p><div class="row"><button class="btn" type="button" id="qCheck">${T("Check answers","Antwoorden nakijken")}</button><button class="ghost" type="button" id="qClose">${T("Close","Sluiten")}</button></div>`:`<p class="note">${T(`The trainee takes a ${les.quiz.length}-question test on this, then asks you to sign off after watching them do it.`,`De trainee maakt hier een test van ${les.quiz.length} vragen over en vraagt je daarna om af te tekenen nadat je het hebt gezien.`)}</p>`}`);
+ const gm=$("#goMilk");if(gm)gm.onclick=()=>{if(!window.openMilkGuide)return;openMilkGuide(h=>{openDlg("",h);return $("#mgHost")},S.lang==="nl"?"nl":"en")};
  const gk=$("#goKnow");if(gk)gk.onclick=()=>{dlg.close();kTab="world";S.section="know";go()};
  if(!me)return;
  $("#qClose").onclick=()=>dlg.close();
