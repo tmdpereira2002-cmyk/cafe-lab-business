@@ -98,6 +98,10 @@ header img{animation:wiggle 1.1s .3s ease-in-out both}
 .instBar .ibTxt{display:flex;flex-direction:column;gap:2px;flex:1 1 100%;min-width:0;font-size:13px;line-height:1.35}.instBar .ibTxt b{font-size:15px}.instBar .ibTxt span{opacity:.85}
 .instBar .ibGo{flex:none;background:var(--crema);color:var(--on-crema);border:0;border-radius:10px;padding:10px 14px;font:600 14px var(--body,system-ui);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;cursor:pointer}
 .instBar .ibX{position:absolute;top:2px;right:2px;flex:none;background:transparent;color:var(--bg);border:0;font-size:16px;min-width:36px;min-height:44px;cursor:pointer;opacity:.7}
+.dlgArt[hidden]{display:none}.dlgArt .kicon.kbig{width:120px;height:120px;border-radius:30px;background:var(--surface);box-shadow:0 6px 18px rgba(40,20,10,.12)}.dlgArt .kicon.kbig svg{width:92px;height:92px}
+@media (prefers-reduced-motion:no-preference){.dlgArt .kicon.kbig{animation:bzPop .5s cubic-bezier(.34,1.56,.64,1)}.dlgArt .kicon.kbig svg{animation:bzFloat 6s ease-in-out infinite}}
+#cafeBar{margin-top:8px}.cafeSel{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}.cafeSel select{flex:1;min-height:38px;padding:6px 10px;font-weight:600}
+.cafeRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}.cafeRow.cur{border-color:var(--crema)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 .calcH{display:flex;align-items:center;gap:10px}.cico{width:40px;height:40px;flex:none;border-radius:12px;background:var(--crema-soft);display:grid;place-items:center}.cico svg{width:32px;height:32px}
@@ -123,6 +127,7 @@ details.eq[open] .eqIco svg{animation:bzPop .5s cubic-bezier(.34,1.56,.64,1)}@ke
 <header><div class="wrap">
   <div class="top"><div class="row" style="gap:10px;flex-wrap:nowrap"><img src="icon-192.png" alt="" width="36" height="36" style="flex:none;border-radius:9px"><h1>Café Lab <span style="color:var(--crema)">Business</span></h1></div><div class="row" style="gap:8px;flex-wrap:nowrap"><button type="button" class="lang" id="langBtn" aria-label="Language">NL</button><a href="https://tmdpereira2002-cmyk.github.io/Cafe-lab/" id="persLink" style="font-size:13px;white-space:nowrap">Café Lab →</a></div></div>
   <div class="seg" role="group" style="margin-top:10px"><button type="button" data-role="boss" id="roleBoss">Boss</button><button type="button" data-role="trainee" id="roleTrainee">Trainee</button></div>
+  <div id="cafeBar" hidden></div>
   <nav class="menu" id="menu"></nav>
 </div></header>
 <main class="wrap" id="view"></main>
@@ -140,7 +145,7 @@ const KEY="cafeWork";
 const DEF={role:"boss",section:null,pin:"",machine:"lm-linea-pb",grinder:"mk-e65s",cafe:"",staff:[],signoff:{},menu:null,clean:{},costs:{},plan:{},lang:null};
 let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){S={...DEF}}
 if(!S.lang)S.lang=/^nl/i.test(navigator.language||"")?"nl":"en";
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+let save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 // T(english, dutch); L() reads a value that may be {en,nl} or plain text the owner typed
 const T=(en,nl)=>S.lang==="nl"?nl:en;
 const L=x=>x&&typeof x==="object"&&!Array.isArray(x)?(x[S.lang]??x.en):x;
@@ -304,6 +309,50 @@ const LESSONS=[
   quiz:[Q(B("During a rush the shot runs 2 s too fast. What is the quickest safe fix?","Tijdens drukte loopt de shot 2 s te snel. Wat is de snelste veilige oplossing?"),[B("Tamp a little firmer on the next shot","Bij de volgende shot iets steviger tampen"),B("Turn the grinder a lot finer","De molen veel fijner zetten"),B("Add 3 g more coffee","3 g meer koffie gebruiken")],0),
    Q(B("After opening a new bag, shots run 8 s too fast. What do you do?","Na het openen van een nieuwe zak lopen de shots 8 s te snel. Wat doe je?"),[B("Tamp much harder","Veel harder tampen"),B("Adjust the grind finer","De maling fijner zetten"),B("Nothing, it will settle","Niets, het komt vanzelf goed")],1)]}
 ];
+/* Extra test questions so every test has 3 (core espresso and milk skills 4), same order as SKILLS. */
+const EXTRA_Q=[
+ [Q(B("Where should the steam wand point when you purge it?","Waar richt je de stoompijp als je hem doorblaast?"),[B("Into the drip tray","In de lekbak"),B("Towards a colleague","Naar een collega"),B("Into the milk jug","In de melkkan")],0)],
+ [Q(B("What steam boiler pressure is normal?","Welke stoomboilerdruk is normaal?"),[B("About 1–1.5 bar","Ongeveer 1–1,5 bar"),B("About 9 bar","Ongeveer 9 bar"),B("0 bar","0 bar")],0)],
+ [Q(B("What happens to the shot when you grind coarser?","Wat gebeurt er met de shot als je grover maalt?"),[B("It runs faster","Hij loopt sneller"),B("It runs slower","Hij loopt langzamer"),B("Nothing changes","Er verandert niets")],0)],
+ [Q(B("How close should your dose be to the house dose?","Hoe dicht moet je dosis bij de huisdosis zitten?"),[B("Within about ±0.2 g","Binnen ongeveer ±0,2 g"),B("Within 2 g","Binnen 2 g"),B("It doesn't matter","Dat maakt niet uit")],0)],
+ [Q(B("The ratio is 1:2 and the dose is 18 g. What is the target yield?","De verhouding is 1:2 en de dosis is 18 g. Wat is de doelopbrengst?"),[B("18 g","18 g"),B("36 g","36 g"),B("54 g","54 g")],1),
+  Q(B("When do you start the shot timer?","Wanneer start je de shottimer?"),[B("When the first drops appear","Als de eerste druppels komen"),B("When you press the button","Als je op de knop drukt"),B("When the cup is half full","Als het kopje half vol is")],1)],
+ [Q(B("Your check shot is on time and tastes good. What do you change?","Je controleshot is op tijd en smaakt goed. Wat verander je?"),[B("Nothing","Niets"),B("Grind finer","Fijner malen"),B("Grind coarser","Grover malen")],0),
+  Q(B("Why can shots change during the day?","Waarom kunnen shots veranderen gedurende de dag?"),[B("The cups get dirty","De kopjes worden vies"),B("Beans, weather and a warming grinder","Bonen, het weer en een warmer wordende molen"),B("They never change","Ze veranderen nooit")],1)],
+ [Q(B("Which words describe good acidity?","Welke woorden beschrijven goede frisheid?"),[B("Bright and juicy","Fris en sappig"),B("Sharp and salty","Scherp en zoutig"),B("Dry and harsh","Droog en ruw")],0),
+  Q(B("A shot ran very slowly and tastes bitter. What is the fix?","Een shot liep heel langzaam en smaakt bitter. Wat is de oplossing?"),[B("Grind finer","Fijner malen"),B("Grind coarser","Grover malen"),B("Add sugar","Suiker toevoegen")],1)],
+ [Q(B("How full do you fill the milk jug?","Hoe vol doe je de melkkan?"),[B("To the brim","Tot de rand"),B("Just below the spout","Tot net onder de tuit"),B("A quarter full","Een kwart vol")],1),
+  Q(B("Can you steam the same milk twice?","Mag je dezelfde melk twee keer opschuimen?"),[B("No, always use fresh milk","Nee, altijd verse melk"),B("Yes, if it's still warm","Ja, als hij nog warm is"),B("Yes, any time","Ja, altijd")],0)],
+ [Q(B("When does foam separate from the milk?","Wanneer scheidt het schuim van de melk?"),[B("When you pour straight away","Als je meteen schenkt"),B("When the drink waits before pouring","Als het drankje staat te wachten"),B("Never","Nooit")],1)],
+ [Q(B("Why do you use a barista version of oat milk?","Waarom gebruik je een barista-versie van havermelk?"),[B("It foams better","Hij schuimt beter"),B("It's cheaper","Hij is goedkoper"),B("It stays colder","Hij blijft kouder")],0)],
+ [Q(B("How do you whisk matcha?","Hoe klop je matcha?"),[B("Slowly in a circle","Langzaam in een rondje"),B("Fast in a W or zigzag until smooth","Snel in een W of zigzag tot het glad is"),B("Shake it in a closed cup","Schudden in een dichte beker")],1)],
+ [Q(B("Where do you pour from at the start?","Van waar schenk je aan het begin?"),[B("From higher up, to mix under the crema","Van hoger, om onder de crema te mengen"),B("Right on the surface","Direct op het oppervlak"),B("Down the side of the cup","Langs de zijkant van de kop")],0)],
+ [Q(B("How do you finish a rosetta?","Hoe maak je een rosetta af?"),[B("Stop and stir","Stoppen en roeren"),B("Lift the jug and pull through the middle","De kan optillen en door het midden trekken"),B("Add foam with a spoon","Schuim toevoegen met een lepel")],1)],
+ [Q(B("A new drink was added to the menu. Where do you check the recipe?","Er staat een nieuw drankje op het menu. Waar kijk je het recept na?"),[B("House drinks in this app","Huisdrankjes in deze app"),B("Ask a guest","Een gast vragen"),B("Guess","Gokken")],0)],
+ [Q(B("What keeps you fast during a rush?","Wat houdt je snel tijdens drukte?"),[B("Skipping the purge","Het doorblazen overslaan"),B("Keeping your station clean as you go","Je plek schoonhouden terwijl je werkt"),B("Using yesterday's milk","Melk van gisteren gebruiken")],1)],
+ [Q(B("Where do you find what to clean today?","Waar vind je wat je vandaag moet schoonmaken?"),[B("Daily routines in this app","Dagelijkse routines in deze app"),B("Nowhere","Nergens"),B("Ask the guests","De gasten vragen")],0)],
+ [Q(B("A guest loves milk drinks. What could you suggest?","Een gast houdt van melkdrankjes. Wat kun je aanraden?"),[B("A ristretto","Een ristretto"),B("A flat white","Een flat white"),B("Nothing","Niets")],1)],
+ [Q(B("What matters most when tamping?","Wat is het belangrijkst bij tampen?"),[B("A level, consistent tamp","Vlak en elke keer gelijk tampen"),B("Pressing as hard as possible","Zo hard mogelijk drukken"),B("Twisting the tamper many times","De tamper vaak draaien")],0)]
+];
+LESSONS.forEach((l,i)=>l.quiz.push(...(EXTRA_Q[i]||[])));
+/* Optional skill: coffee around the world, studied in the barista's own time. */
+SKILLS.push([B("Coffee around the world","Koffie in de wereld"),B("Knows the main coffee countries and drinks from around the world, and tells guests about them","Kent de belangrijkste koffielanden en koffiedrankjes uit de wereld, en vertelt gasten erover")]);
+LESSONS.push({learn:[
+  B("Read Coffee knowledge in this app: the tabs Countries and Coffee around the world. This is an optional skill to study in your own time.","Lees Koffiekennis in deze app: de tabbladen Landen en Koffie in de wereld. Dit is een optionele vaardigheid die je in je eigen tijd leert."),
+  B("Know the big four: Brazil (nutty and chocolatey, the biggest producer), Colombia (balanced, caramel), Ethiopia (floral and fruity, where coffee comes from) and Vietnam (strong robusta).","Ken de grote vier: Brazilië (nootachtig en chocolade, de grootste producent), Colombia (in balans, karamel), Ethiopië (bloemig en fruitig, waar koffie vandaan komt) en Vietnam (sterke robusta)."),
+  B("Know drinks guests ask about: Turkish coffee, Vietnamese iced coffee with condensed milk, Italian espresso and the Dutch koffie verkeerd.","Ken drankjes waar gasten naar vragen: Turkse koffie, Vietnamese ijskoffie met gecondenseerde melk, Italiaanse espresso en de Nederlandse koffie verkeerd."),
+  B("Use it at the counter: link the bean we serve to its country and one or two tastes. Guests remember a barista who can tell them where their coffee comes from.","Gebruik het aan de toonbank: koppel de boon die we schenken aan het land en één of twee smaken. Gasten onthouden een barista die vertelt waar hun koffie vandaan komt.")],
+ quiz:[Q(B("Where does coffee originally come from?","Waar komt koffie oorspronkelijk vandaan?"),[B("Brazil","Brazilië"),B("Ethiopia","Ethiopië"),B("Italy","Italië")],1),
+  Q(B("Which country produces the most coffee?","Welk land produceert de meeste koffie?"),[B("Brazil","Brazilië"),B("Vietnam","Vietnam"),B("Colombia","Colombia")],0),
+  Q(B("A guest asks what a koffie verkeerd is. What do you say?","Een gast vraagt wat koffie verkeerd is. Wat zeg je?"),[B("Espresso with brandy","Espresso met brandewijn"),B("Coffee with more milk than coffee","Koffie met meer melk dan koffie"),B("Iced coffee","IJskoffie")],1),
+  Q(B("What is Vietnamese cà phê sữa đá?","Wat is Vietnamese cà phê sữa đá?"),[B("Strong coffee over condensed milk and ice","Sterke koffie op gecondenseerde melk en ijs"),B("Coffee with cheese","Koffie met kaas"),B("Green tea with milk","Groene thee met melk")],0)]});
+/* Optional skills: latte art and coffee around the world. They don't count towards being fully trained. */
+const OPTIONAL=new Set([11,12,SKILLS.length-1]);
+const isOpt=k=>OPTIONAL.has(+k);
+const REQ=SKILLS.map((_,k)=>k).filter(k=>!isOpt(k));
+const bonusOf=k=>{const b=(S.bonus||{})[k];return isFinite(+b)?+b:0};
+const bonusLine=k=>bonusOf(k)>0?T(`+${eur(bonusOf(k))} per hour once signed off`,`+${eur(bonusOf(k))} per uur na aftekenen`):"";
+
 const ROUTINES={
  open:[B("Opening","Opening"),[B("Turn on the machine 30 min before opening (or check the eco wake-up)","Zet de machine 30 min voor opening aan (of controleer de eco-wekker)"),B("Check boiler and pump gauges","Controleer boiler- en pompmeters"),B("Flush each group 5 s, insert clean portafilters","Spoel elke groep 5 s, plaats schone pistons"),B("Fill the grinder hopper; purge 1–2 doses","Vul de bonenbak; maal 1–2 doses weg"),B("Pull a check shot: weigh dose, yield and time; adjust grind","Zet een controleshot: weeg dosis, opbrengst en tijd; stel de maling bij"),B("Taste and log the check shot","Proef en noteer de controleshot"),B("Fill the milk fridge, check dates","Vul de melkkoelkast, controleer data"),B("Stock cups, lids, sugar, napkins","Vul kopjes, deksels, suiker en servetten aan")]],
  hourly:[B("During service","Tijdens service"),[B("Purge and wipe the wand after every jug","Blaas de stoompijp door en veeg af na elke kan"),B("Flush the group before every shot","Spoel de groep voor elke shot"),B("Wipe the portafilter dry before dosing","Veeg de piston droog voor het doseren"),B("Empty the knock box","Leeg de klopbak"),B("Re-check shot time after a rush or bean change","Controleer de shottijd na drukte of een bonenwissel")]],
@@ -423,36 +472,48 @@ VIEWS.setup=()=>{V(`<div class="panel"><h2>${T("Café setup","Café-instellingen
 };
 
 VIEWS.staff=()=>{
- const rows=S.staff.map((n,i)=>{const st=S.signoff[n]||{},done=SKILLS.filter((_,k)=>st[k]==="ok").length,ask=SKILLS.filter((_,k)=>st[k]==="ask").length;
+ const optK=[...OPTIONAL];
+ const rows=S.staff.map((n,i)=>{const st=S.signoff[n]||{},done=REQ.filter(k=>st[k]==="ok").length,ask=SKILLS.filter((_,k)=>st[k]==="ask").length;
+   const extra=optK.filter(k=>st[k]==="ok").reduce((a,k)=>a+bonusOf(k),0);
+   const row=k=>{const [t,d]=SKILLS[k];return `<label class="check"><input type="checkbox" data-sign="${esc(n)}|${k}"${st[k]==="ok"?" checked":""}><span><b>${L(t)}</b><br><small class="hint">${L(d)}</small></span><span class="who">${(st[k]==="ok"?T("✓ signed off","✓ afgetekend"):st[k]==="ask"?`<b class='warnT'>${T("asks sign-off","vraagt aftekenen")}</b>`:"")+(((S.quiz||{})[n]||{})[k]?`<br>${T("test passed","test gehaald")}`:"")}</span></label>`};
    return `<div class="panel"><div class="row spread"><h3>${esc(n)}</h3><button class="ghost" data-del="${i}" type="button">${T("Remove","Verwijderen")}</button></div>
-   <div class="bar"><i style="width:${done/SKILLS.length*100}%"></i></div><p class="hint">${done}/${SKILLS.length} ${T("skills signed off","vaardigheden afgetekend")}${ask?` · <b class="warnT">${ask} ${T("waiting for your sign-off","wachten op jouw handtekening")}</b>`:""}</p>
-   <details${ask?" open":""}><summary>${T("Skills","Vaardigheden")}</summary>${SKILLS.map(([t,d],k)=>`<label class="check"><input type="checkbox" data-sign="${esc(n)}|${k}"${st[k]==="ok"?" checked":""}><span><b>${L(t)}</b><br><small class="hint">${L(d)}</small></span><span class="who">${(st[k]==="ok"?T("✓ signed off","✓ afgetekend"):st[k]==="ask"?`<b class='warnT'>${T("asks sign-off","vraagt aftekenen")}</b>`:"")+(((S.quiz||{})[n]||{})[k]?`<br>${T("test passed","test gehaald")}`:"")}</span></label>`).join("")}</details></div>`}).join("");
+   <div class="bar"><i style="width:${done/REQ.length*100}%"></i></div><p class="hint">${done}/${REQ.length} ${T("required skills signed off","verplichte vaardigheden afgetekend")}${ask?` · <b class="warnT">${ask} ${T("waiting for your sign-off","wachten op jouw handtekening")}</b>`:""}${extra>0?` · <b class="ok">${T("extra pay","extra loon")} +${eur(extra)} ${T("per hour","per uur")}</b>`:""}</p>
+   <details${ask?" open":""}><summary>${T("Required skills","Verplichte vaardigheden")}</summary>${REQ.map(row).join("")}</details>
+   <details><summary>${T("Optional skills","Optionele vaardigheden")}</summary>${optK.map(row).join("")}</details></div>`}).join("");
  V(`<div class="panel"><h2>${T("Staff training","Training personeel")}</h2><p class="hint">${T("Add your baristas. Each skill has a short lesson and a small test in the trainee's menu. When they pass, it shows here as asking for sign-off: watch them do it, then tick it.","Voeg je barista's toe. Elke vaardigheid heeft een korte uitleg en een kleine test in het menu van de trainee. Als ze slagen, zie je hier een verzoek om af te tekenen: kijk hoe ze het doen en vink het dan aan.")}</p>
- <div class="row"><input id="sName" placeholder="${T("Barista name","Naam barista")}" style="flex:1;min-width:160px"><button class="btn" id="sAdd" type="button">${T("Add","Toevoegen")}</button></div></div>${rows||`<div class="empty">${EMPTY_STAFF}<p class="hint">${T("No staff yet. Add your first barista above; they get their own training checklist.","Nog geen personeel. Voeg hierboven je eerste barista toe; die krijgt een eigen trainingslijst.")}</p></div>`}`);
+ <div class="row"><input id="sName" placeholder="${T("Barista name","Naam barista")}" style="flex:1;min-width:160px"><button class="btn" id="sAdd" type="button">${T("Add","Toevoegen")}</button></div></div>
+ <div class="panel"><h3>${T("Optional skills and extra pay","Optionele vaardigheden en extra loon")}</h3><p class="hint">${T("Optional skills don't count towards being fully trained. Baristas study them in their own time; set an hourly bonus to reward them once you sign the skill off (0 = no bonus).","Optionele vaardigheden tellen niet mee voor volledig getraind. Barista's leren ze in hun eigen tijd; stel een uurbonus in om ze te belonen zodra je de vaardigheid aftekent (0 = geen bonus).")}</p>
+ <div class="grid">${optK.map(k=>`<label class="field"><span>${L(SKILLS[k][0])} · € ${T("per hour","per uur")}</span><input class="num" inputmode="decimal" data-bonus="${k}" value="${bonusOf(k)?String(bonusOf(k)).replace(".",S.lang==="nl"?",":"."):"0"}"></label>`).join("")}</div></div>
+ ${rows||`<div class="empty">${typeof EMPTY_STAFF!=="undefined"?EMPTY_STAFF:""}<p class="hint">${T("No staff yet. Add your first barista above; they get their own training checklist.","Nog geen personeel. Voeg hierboven je eerste barista toe; die krijgt een eigen trainingslijst.")}</p></div>`}`);
  $("#sAdd").onclick=()=>{const n=$("#sName").value.trim();if(n&&!S.staff.includes(n)){S.staff.push(n);save();VIEWS.staff()}};
- $("#view").onchange=e=>{const c=e.target.dataset.sign;if(!c)return;const[n,k]=c.split("|");(S.signoff[n]=S.signoff[n]||{})[k]=e.target.checked?"ok":"";save();VIEWS.staff()};
+ $("#view").oninput=e=>{const a=e.target.dataset;if(a.bonus!=null){const v=num(e.target.value);S.bonus=S.bonus||{};S.bonus[a.bonus]=isFinite(v)&&v>0?v:0;save()}};
+ $("#view").onchange=e=>{const a=e.target.dataset;if(a.bonus!=null)return;
+  if(!a.sign)return;const[n,k]=a.sign.split("|");(S.signoff[n]=S.signoff[n]||{})[k]=e.target.checked?"ok":"";save();VIEWS.staff()};
  $("#view").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>twice(b,()=>{S.staff.splice(b.dataset.del,1);save();VIEWS.staff()}));
 };
 
 VIEWS.path=()=>{
  const me=S.me&&S.staff.includes(S.me)?S.me:"";
- V(`<div class="panel"><h2>${T("My training","Mijn training")}</h2><p class="hint">${T("Pick your name (your manager adds you). For each skill: read the short lesson, pass the small test, then show your manager. They sign it off after watching you do it.","Kies je naam (je manager voegt je toe). Per vaardigheid: lees de korte uitleg, haal de kleine test en laat het dan aan je manager zien. Die tekent af nadat die het je heeft zien doen.")}</p>
+ V(`<div class="panel"><h2>${T("My training","Mijn training")}</h2><p class="hint">${T("Pick your name (your manager adds you). For each skill: read the short lesson, pass the test, then show your manager. They sign it off after watching you do it.","Kies je naam (je manager voegt je toe). Per vaardigheid: lees de korte uitleg, haal de test en laat het dan aan je manager zien. Die tekent af nadat die het je heeft zien doen.")}</p>
  <select id="me"><option value="">${T("— choose your name —","— kies je naam —")}</option>${S.staff.map(n=>`<option${n===me?" selected":""}>${esc(n)}</option>`).join("")}</select>
  ${S.staff.length?"":`<p class="note">${T("No staff added yet. Ask your manager to add you under Boss → Staff training.","Nog geen personeel toegevoegd. Vraag je manager om je toe te voegen onder Baas → Training personeel.")}</p>`}</div>
  <div id="mySkills"></div>`);
  $("#me").onchange=e=>{S.me=e.target.value;save();VIEWS.path()};
  if(!me)return;
- const st=S.signoff[me]||{},qz=(S.quiz||{})[me]||{},done=SKILLS.filter((_,k)=>st[k]==="ok").length,next=SKILLS.findIndex((_,k)=>st[k]!=="ok");
+ const st=S.signoff[me]||{},qz=(S.quiz||{})[me]||{},done=REQ.filter(k=>st[k]==="ok").length,next=REQ.find(k=>st[k]!=="ok");
  const status=k=>st[k]==="ok"?["✅",T("Signed off","Afgetekend")]:qz[k]?["⏳",T("Test passed · show your manager","Test gehaald · laat het je manager zien")]:["○",T("Not started","Nog niet begonnen")];
- $("#mySkills").innerHTML=`<div class="panel"><div class="bar"><i style="width:${done/SKILLS.length*100}%"></i></div><p class="hint">${done} ${T("of","van")} ${SKILLS.length} ${T("signed off","afgetekend")}${next>=0?` · ${T("next up","volgende")}: <b>${L(SKILLS[next][0])}</b>`:T(" · fully trained!"," · volledig getraind!")}</p>
- ${SKILLS.map(([t,d],k)=>{const [ic,txt]=status(k);return `<div class="check"><span style="width:22px;flex:none">${ic}</span><span style="flex:1;min-width:0"><b>${L(t)}</b><br><small class="hint">${txt}</small></span><button class="${qz[k]||st[k]==="ok"?"ghost":"btn"}" type="button" data-lesson="${k}" style="flex:none">${qz[k]||st[k]==="ok"?T("Review","Bekijken"):T("Learn & test","Leren & test")}</button></div>`}).join("")}</div>`;
+ const row=k=>{const [t]=SKILLS[k],[ic,txt]=status(k),bl=isOpt(k)?bonusLine(k):"";return `<div class="check"><span style="width:22px;flex:none">${ic}</span><span style="flex:1;min-width:0"><b>${L(t)}</b><br><small class="hint">${txt}${bl?` · <b class="ok">${bl}</b>`:""}</small></span><button class="${qz[k]||st[k]==="ok"?"ghost":"btn"}" type="button" data-lesson="${k}" style="flex:none">${qz[k]||st[k]==="ok"?T("Review","Bekijken"):T("Learn & test","Leren & test")}</button></div>`};
+ $("#mySkills").innerHTML=`<div class="panel"><div class="bar"><i style="width:${done/REQ.length*100}%"></i></div><p class="hint">${done} ${T("of","van")} ${REQ.length} ${T("required skills signed off","verplichte vaardigheden afgetekend")}${next!=null?` · ${T("next up","volgende")}: <b>${L(SKILLS[next][0])}</b>`:T(" · fully trained!"," · volledig getraind!")}</p>${REQ.map(row).join("")}</div>
+ <div class="panel"><h3>${T("Optional skills","Optionele vaardigheden")}</h3><p class="hint">${T("Extra skills to learn in your own time, not during your shift. They make you more valuable behind the bar, and your manager may reward them.","Extra vaardigheden om in je eigen tijd te leren, niet tijdens je dienst. Ze maken je waardevoller achter de bar, en je manager kan ze belonen.")}</p>${[...OPTIONAL].map(row).join("")}</div>`;
  $("#mySkills").onclick=e=>{const b=e.target.closest("[data-lesson]");if(b)openLesson(me,+b.dataset.lesson)};
 };
-function openLesson(me,k){const les=LESSONS[k],[t,d]=SKILLS[k];
- openDlg("",`<p class="hint" style="margin:0">${T("Skill","Vaardigheid")} ${k+1} ${T("of","van")} ${SKILLS.length}</p><h2>${L(t)}</h2><p class="hint" style="margin:0">${T("Goal","Doel")}: ${L(d)}</p>
+function openLesson(me,k){const les=LESSONS[k],[t,d]=SKILLS[k],opt=isOpt(k),bl=bonusLine(k),pos=opt?[...OPTIONAL].indexOf(k):REQ.indexOf(k),tot=opt?OPTIONAL.size:REQ.length;
+ openDlg("",`<p class="hint" style="margin:0">${opt?T("Optional skill","Optionele vaardigheid"):T("Skill","Vaardigheid")} ${pos+1} ${T("of","van")} ${tot}</p><h2>${L(t)}</h2><p class="hint" style="margin:0">${T("Goal","Doel")}: ${L(d)}</p>
+ ${opt?`<div class="out">${T("Study this in your own time, not during your shift.","Leer dit in je eigen tijd, niet tijdens je dienst.")}${bl?` <b>${T("Reward","Beloning")}: ${bl}.</b>`:""}${k===SKILLS.length-1?` <button type="button" class="ghost" id="goKnow" style="margin-top:8px">${T("Open Coffee knowledge","Open Koffiekennis")}</button>`:""}</div>`:""}
  <h3>${T("What to know","Wat je moet weten")}</h3><ul>${les.learn.map(x=>`<li>${L(x)}</li>`).join("")}</ul>
- ${me?`<h3>${T("Quick test","Korte test")}</h3>${les.quiz.map((q,i)=>`<fieldset id="q${i}" style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0"><legend style="font-weight:600;padding:0 4px">${i+1}. ${L(q.q)}</legend>${q.a.map((a,j)=>`<label class="row" style="flex-wrap:nowrap;gap:10px;padding:5px 0;cursor:pointer"><input type="radio" name="q${i}" value="${j}" style="width:20px;height:20px;min-height:0;flex:none">${L(a)}</label>`).join("")}<p class="hint" data-fb="${i}" style="margin:4px 0 0" hidden></p></fieldset>`).join("")}
- <p id="qRes" hidden></p><div class="row"><button class="btn" type="button" id="qCheck">${T("Check answers","Antwoorden nakijken")}</button><button class="ghost" type="button" id="qClose">${T("Close","Sluiten")}</button></div>`:`<p class="note">${T("The trainee takes a 2-question test on this, then asks you to sign off after watching them do it.","De trainee maakt hier een test van 2 vragen over en vraagt je daarna om af te tekenen nadat je het hebt gezien.")}</p>`}`);
+ ${me?`<h3>${T("Test","Test")} · ${les.quiz.length} ${T("questions","vragen")}</h3>${les.quiz.map((q,i)=>`<fieldset id="q${i}" style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0"><legend style="font-weight:600;padding:0 4px">${i+1}. ${L(q.q)}</legend>${q.a.map((a,j)=>`<label class="row" style="flex-wrap:nowrap;gap:10px;padding:5px 0;cursor:pointer"><input type="radio" name="q${i}" value="${j}" style="width:20px;height:20px;min-height:0;flex:none">${L(a)}</label>`).join("")}<p class="hint" data-fb="${i}" style="margin:4px 0 0" hidden></p></fieldset>`).join("")}
+ <p id="qRes" hidden></p><div class="row"><button class="btn" type="button" id="qCheck">${T("Check answers","Antwoorden nakijken")}</button><button class="ghost" type="button" id="qClose">${T("Close","Sluiten")}</button></div>`:`<p class="note">${T(`The trainee takes a ${les.quiz.length}-question test on this, then asks you to sign off after watching them do it.`,`De trainee maakt hier een test van ${les.quiz.length} vragen over en vraagt je daarna om af te tekenen nadat je het hebt gezien.`)}</p>`}`);
+ const gk=$("#goKnow");if(gk)gk.onclick=()=>{dlg.close();kTab="world";S.section="know";go()};
  if(!me)return;
  $("#qClose").onclick=()=>dlg.close();
  $("#qCheck").onclick=()=>{let ok=0,miss=false;les.quiz.forEach((q,i)=>{const v=document.querySelector(`input[name="q${i}"]:checked`),fb=document.querySelector(`[data-fb="${i}"]`);fb.hidden=false;
@@ -870,8 +931,54 @@ VIEWS.know=()=>{
  <nav class="menu" style="padding-top:0;margin-bottom:10px">${tabs.map(([k,l])=>`<button type="button" data-ktab="${k}" aria-current="${kTab===k}">${l}</button>`).join("")}</nav>${body}`);
  $("#view").onclick=e=>{const a=e.target.closest("[data-ktab],[data-kr],[data-kt]");if(!a)return;const d=a.dataset;
   if(d.ktab){kTab=d.ktab;return VIEWS.know()}if(d.kr){kReg=d.kr;return VIEWS.know()}
-  const t=KTOPICS[+d.kt];openDlg("",`<h2>${L(t[0])}</h2><p class="hint" style="margin:0">${L(t[1])}</p><ul>${t[2].map(p=>`<li>${L(p)}</li>`).join("")}</ul><div class="out"><b>${T("Say it at the counter","Zeg het aan de toonbank")}</b><br>${L(t[3])}</div>`)};
+  const t=KTOPICS[+d.kt];openDlg(`<span class="kicon kbig">${KICONS[+d.kt]||""}</span>`,`<h2>${L(t[0])}</h2><p class="hint" style="margin:0">${L(t[1])}</p><ul>${t[2].map(p=>`<li>${L(p)}</li>`).join("")}</ul><div class="out"><b>${T("Say it at the counter","Zeg het aan de toonbank")}</b><br>${L(t[3])}</div>`)};
 };
+
+/* ---------- several cafés under one owner ----------
+   Each café keeps its own copy of the fields below. The open café's copy lives directly on S
+   (so every screen keeps working unchanged); switching swaps it with the stored copy. */
+const PER_CAFE=["cafe","machine","grinder","staff","signoff","quiz","menu","menuVer","opts","routines","clean","costs","plan","me","bonus"];
+function stashCafe(){if(!S.cafes)return;const c={};PER_CAFE.forEach(k=>{if(S[k]!==undefined)c[k]=S[k]});S.cafes[S.cur]=JSON.parse(JSON.stringify(c))}
+function ensureCafeDefaults(){
+ if(!S.machine)S.machine="lm-linea-pb";if(!S.grinder)S.grinder="mk-e65s";if(S.cafe==null)S.cafe="";
+ if(!Array.isArray(S.staff))S.staff=[];["signoff","quiz","clean","costs","plan"].forEach(k=>{if(!S[k]||typeof S[k]!=="object")S[k]={}});
+ if(!Array.isArray(S.menu)){S.menu=DEFAULT_MENU.map(fromTpl);S.menuVer=2}
+ if(!S.opts)S.opts=DEF_OPTS();if(!Array.isArray(S.routines))S.routines=defRoutines();
+ if(!S.bonus)S.bonus={[SKILLS.length-1]:0.1};
+}
+function loadCafe(id){if(!S.cafes||!S.cafes[id])return;stashCafe();S.cur=id;const c=JSON.parse(JSON.stringify(S.cafes[id]));PER_CAFE.forEach(k=>{S[k]=c[k]});ensureCafeDefaults()}
+const cafeName=(id,i)=>{const c=id===S.cur?S:S.cafes[id];return (c&&c.cafe)||T("Café","Café")+" "+(i+1)};
+if(!S.cafes){S.cur="c1";S.cafes={};ensureCafeDefaults();stashCafe()}else{ensureCafeDefaults()}
+// keep the stored copy of the open café up to date on every save
+{const _save=save;save=()=>{stashCafe();_save()}}
+
+function renderCafeBar(){const el=$("#cafeBar");if(!el)return;const ids=Object.keys(S.cafes||{});
+ if(ids.length<2){el.hidden=true;el.innerHTML="";return}
+ el.hidden=false;el.innerHTML=`<label class="cafeSel"><span>${T("Café","Café")}</span><select id="cafeSel" aria-label="${T("Choose café","Kies café")}">${ids.map((id,i)=>`<option value="${id}"${id===S.cur?" selected":""}>${esc(cafeName(id,i))}</option>`).join("")}</select></label>`;
+ $("#cafeSel").onchange=e=>{loadCafe(e.target.value);save();go();toast(T("Switched to ","Gewisseld naar ")+cafeName(S.cur,ids.indexOf(S.cur)))}}
+{const _rm=renderMenu;renderMenu=function(){_rm();renderCafeBar()}}
+
+function cafesPanel(){const ids=Object.keys(S.cafes);stashCafe();
+ const stat=id=>{const c=S.cafes[id],st=c.staff||[],so=c.signoff||{};const trained=st.filter(n=>REQ.every(k=>(so[n]||{})[k]==="ok")).length,ask=st.reduce((a,n)=>a+SKILLS.filter((_,k)=>(so[n]||{})[k]==="ask").length,0);
+   const m=MACHINES.find(x=>x.id===c.machine);return `${st.length} ${T("staff","personeel")} · ${trained} ${T("fully trained","volledig getraind")}${ask?` · <b class="warnT">${ask} ${T("to sign off","af te tekenen")}</b>`:""}${m?` · ${esc(m.brand+" "+m.name)}`:""}`};
+ return `<div class="panel" id="cafesPanel"><h2>${T("Your cafés","Jouw cafés")}</h2><p class="hint">${T("Each café has its own staff, training, drinks, prices, cleaning lists and gear. Switch café at the top of the screen.","Elk café heeft eigen personeel, training, drankjes, prijzen, schoonmaaklijsten en apparatuur. Wissel van café bovenaan het scherm.")}</p>
+ <div style="display:flex;flex-direction:column;gap:8px">${ids.map((id,i)=>`<div class="cafeRow${id===S.cur?" cur":""}"><span style="min-width:0"><b>${esc(cafeName(id,i))}</b>${id===S.cur?` <span class="tag on">${T("open now","nu open")}</span>`:""}<br><small class="hint">${stat(id)}</small></span>${id===S.cur?"":`<button type="button" class="ghost" data-open-cafe="${id}">${T("Open","Openen")}</button>`}</div>`).join("")}</div>
+ <details style="margin-top:10px"><summary>${T("Add a café","Café toevoegen")}</summary><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+  <label class="field"><span>${T("Name of the new café","Naam van het nieuwe café")}</span><input id="ncName" placeholder="${T("e.g. Corner Coffee Centrum","bijv. Koffie Hoek Centrum")}"></label>
+  <label class="row" style="gap:8px;flex-wrap:nowrap"><input type="checkbox" id="ncCopy" checked style="width:22px;height:22px;min-height:0;flex:none"><span>${T("Copy drinks, milk and extras, cleaning lists, gear and prices from","Kopieer drankjes, melk en extra's, schoonmaaklijsten, apparatuur en prijzen van")} <b>${esc(cafeName(S.cur,ids.indexOf(S.cur)))}</b></span></label>
+  <p class="hint" style="margin:0">${T("Staff and training are not copied: every café starts with its own team.","Personeel en training worden niet gekopieerd: elk café begint met een eigen team.")}</p>
+  <button type="button" class="btn" id="ncAdd">${T("Add café","Café toevoegen")}</button><p class="hint badT" id="ncErr" hidden>${T("Give the café a name.","Geef het café een naam.")}</p></div></details>
+ ${ids.length>1?`<button type="button" class="ghost" id="delCafe" style="margin-top:10px">${T("Delete this café","Dit café verwijderen")}</button>`:""}</div>`}
+function wireCafes(){
+ document.querySelectorAll("[data-open-cafe]").forEach(b=>b.onclick=()=>{loadCafe(b.dataset.openCafe);save();go()});
+ const add=$("#ncAdd");if(add)add.onclick=()=>{const name=$("#ncName").value.trim();if(!name){$("#ncErr").hidden=false;return}
+   stashCafe();const id="c"+Date.now().toString(36),src=S.cafes[S.cur],c={cafe:name};
+   if($("#ncCopy").checked)["machine","grinder","menu","menuVer","opts","routines","costs","bonus"].forEach(k=>{if(src[k]!==undefined)c[k]=JSON.parse(JSON.stringify(src[k]))});
+   S.cafes[id]=c;loadCafe(id);save();go();toast(T("Café added: ","Café toegevoegd: ")+name)};
+ const del=$("#delCafe");if(del)del.onclick=()=>twice(del,()=>{const gone=S.cur;delete S.cafes[gone];S.cur=Object.keys(S.cafes)[0];const c=JSON.parse(JSON.stringify(S.cafes[S.cur]));PER_CAFE.forEach(k=>{S[k]=c[k]});ensureCafeDefaults();save();go()});
+}
+{const _setup=VIEWS.setup;VIEWS.setup=()=>{_setup();$("#view").insertAdjacentHTML("beforeend",cafesPanel());wireCafes();stagger($("#view"));
+  const b=$("#cSave");if(b){const o=b.onclick;b.onclick=e=>{o&&o(e);renderCafeBar();const cp=$("#cafesPanel");if(cp){cp.outerHTML=cafesPanel();wireCafes()}}}}}
 
 go();
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
