@@ -224,8 +224,8 @@ const GRINDERS=[
  G("ditting-807","807 Lab Sweet","Ditting","80 mm flat","dial",["single","filter"],"Swiss; used for filter brewing and retail bags.","Zwitsers; voor filterkoffie en verkoopzakken.")
 ];
 const burr=b=>S.lang==="nl"?b.replace("flat","vlak").replace("conical","conisch"):b;
-const mach=()=>MACHINES.find(m=>m.id===S.machine)||MACHINES[0];
-const grind=()=>GRINDERS.find(g=>g.id===S.grinder)||GRINDERS[0];
+const mach=()=>allM().find(m=>m.id===S.machine)||MACHINES[0];
+const grind=()=>allG().find(g=>g.id===S.grinder)||GRINDERS[0];
 const mtype=m=>m.type.map(k=>L(TYPES[k])).join(", ");
 
 /* ---------- training and routines ---------- */
@@ -463,10 +463,10 @@ function openDlg(art,html){$("#dlgArt").innerHTML=art;$("#dlgArt").hidden=!art;$
 const VIEWS={};
 VIEWS.setup=()=>{V(`<div class="panel"><h2>${T("Café setup","Café-instellingen")}</h2><p class="hint">${T("Set the café's gear once. Trainees then see guides for exactly this machine and grinder.","Stel de apparatuur van het café één keer in. Trainees zien dan uitleg voor precies deze machine en molen.")}</p>
  <div class="grid"><label class="field"><span>${T("Café name","Naam café")}</span><input id="cName" value="${esc(S.cafe)}" placeholder="${T("e.g. Corner Coffee","bijv. Koffie Hoek")}"></label>
- <label class="field"><span>${T("Espresso machine","Espressomachine")}</span><select id="cMach">${opt(MACHINES,S.machine)}</select></label>
- <label class="field"><span>${T("Espresso grinder","Espressomolen")}</span><select id="cGrind">${opt(GRINDERS,S.grinder)}</select></label>
+ <label class="field"><span>${T("Espresso machine","Espressomachine")}</span><select id="cMach">${opt(allM(),S.machine)}</select></label>
+ <label class="field"><span>${T("Espresso grinder","Espressomolen")}</span><select id="cGrind">${opt(allG(),S.grinder)}</select></label>
  <label class="field"><span>${T("Manager PIN (optional)","Manager-pincode (optioneel)")}</span><input id="cPin" inputmode="numeric" maxlength="6" value="${esc(S.pin)}" placeholder="${T("none","geen")}"></label></div>
- <p class="note">${T("The PIN only stops a trainee opening the boss menu on a shared tablet. It is not real security: proper café accounts come with the paid version.","De pincode houdt een trainee alleen uit het menu van de baas op een gedeelde tablet. Het is geen echte beveiliging: echte café-accounts komen met de betaalde versie.")}</p>
+ <p class="note">${T("The PIN stops a trainee opening the boss menu on a shared tablet.","De pincode houdt een trainee uit het menu van de baas op een gedeelde tablet.")}</p>
  <button class="btn" id="cSave" type="button">${T("Save setup","Instellingen opslaan")}</button></div>
  <div class="panel" id="cSum"></div>`);
  const sum=()=>{const m=mach(),g=grind();$("#cSum").innerHTML=`<h3>${esc(S.cafe||T("Your café","Jouw café"))}</h3><p><b>${esc(m.brand+" "+m.name)}</b> · ${mtype(m)} · ${m.groups} ${T("groups","groepen")}<br><small class="hint">${esc(L(m.note))}</small></p><div>${m.feat.map(f=>`<span class="tag on">${L(FUNCS[f][0])}</span>`).join("")}</div><p style="margin-top:10px"><b>${esc(g.brand+" "+g.name)}</b> · ${burr(g.burr)} · ${L(ADJ[g.adj])}<br><small class="hint">${esc(L(g.note))}</small></p>`};
@@ -777,7 +777,7 @@ VIEWS.routine=()=>{
 };
 
 VIEWS.machine=()=>{const m=mach();
- V(`<div class="panel"><h2>${esc(m.brand+" "+m.name)}</h2><p class="hint">${mtype(m)} · ${m.groups} ${T("groups","groepen")}. ${esc(L(m.note))}</p>${!S.cafe?`<p class="note">${T("Your manager hasn't set the café's machine yet; this is the default.","Je manager heeft de machine van het café nog niet ingesteld; dit is de standaard.")}</p>`:""}</div>
+ V(`<div class="panel"><h2>${esc(m.brand+" "+m.name)}</h2><p class="hint">${mtype(m)} · ${m.groups} ${T("groups","groepen")}. ${esc(L(m.note))}</p>${!S.cafe&&S.machine==="lm-linea-pb"?`<p class="note">${T("Your manager hasn't set the café's machine yet; this is the default.","Je manager heeft de machine van het café nog niet ingesteld; dit is de standaard.")}</p>`:""}</div>
  <h3>${T("What this machine does, and how to use it","Wat deze machine kan, en hoe je het gebruikt")}</h3>${m.feat.map(f=>`<div class="panel"><h3>${L(FUNCS[f][0])}</h3><p>${L(FUNCS[f][1])}</p><p class="note"><b>${T("How","Hoe")}:</b> ${L(FUNCS[f][2])}</p></div>`).join("")}
  <details class="panel"><summary>${T("Functions this machine doesn't have","Functies die deze machine niet heeft")}</summary>${Object.keys(FUNCS).filter(f=>!m.feat.includes(f)).map(f=>`<p><b>${L(FUNCS[f][0])}</b> — ${L(FUNCS[f][1])}</p>`).join("")}</details>
  <p class="hint">${T("Exact buttons differ per model year. Keep the manufacturer's manual by the machine.","De precieze knoppen verschillen per bouwjaar. Houd de handleiding bij de machine.")}</p>`)};
@@ -795,14 +795,14 @@ VIEWS.grinder=()=>{const g=grind(),step=g.adj!=="dial"||true;
 VIEWS.gear=()=>{
  V(`<h2>${T("Commercial equipment guide","Gids professionele apparatuur")}</h2><p class="hint">${T("The 25 espresso machines and 15 grinders you meet most in cafés, and what each can do. Tap one for details.","De 25 espressomachines en 15 molens die je het vaakst in cafés ziet, en wat ze kunnen. Tik er een aan voor details.")}</p>
  <input id="gq" type="search" placeholder="${T("Search, e.g. La Marzocco, gravimetric","Zoek, bijv. La Marzocco, gravimetrisch")}" style="margin-bottom:12px">
- <h3>${T("Espresso machines","Espressomachines")} (${MACHINES.length})</h3><div class="cards" id="gm"></div>
- <h3 style="margin-top:16px">${T("Grinders","Molens")} (${GRINDERS.length})</h3><div class="cards" id="gg"></div>
+ <h3>${T("Espresso machines","Espressomachines")} (${allM().length})</h3><div class="cards" id="gm"></div>
+ <h3 style="margin-top:16px">${T("Grinders","Molens")} (${allG().length})</h3><div class="cards" id="gg"></div>
  <div class="panel" style="margin-top:16px"><h3>${T("All machine functions explained","Alle machinefuncties uitgelegd")}</h3>${Object.values(FUNCS).map(f=>`<details><summary>${L(f[0])}</summary><p>${L(f[1])}</p><p class="note">${L(f[2])}</p></details>`).join("")}</div>
  <p class="hint">${T("Features are for typical current versions; options vary by year and configuration. Check with your dealer.","Functies gelden voor gangbare huidige versies; opties verschillen per jaar en uitvoering. Vraag het je dealer.")}</p>`);
  const boss=S.role==="boss";
  const draw=()=>{const q=$("#gq").value.toLowerCase();
-   $("#gm").innerHTML=MACHINES.filter(m=>(m.brand+" "+m.name+" "+mtype(m)+" "+m.feat.map(f=>L(FUNCS[f][0])).join(" ")).toLowerCase().includes(q)).map(m=>`<details class="card eq"><summary><span class="eqIco">${machIco(m)}</span><span class="eqTxt"><b>${esc(m.brand)} ${esc(m.name)}</b><small>${mtype(m)} · ${m.groups} ${T("groups","groepen")}</small></span></summary><p style="font-size:14px">${esc(L(m.note))}</p>${m.feat.map(f=>`<span class="tag on">${L(FUNCS[f][0])}</span>`).join("")}${boss?`<p><button class="ghost" type="button" data-usem="${m.id}">${T("Use in my café","Gebruik in mijn café")}</button></p>`:""}</details>`).join("");
-   $("#gg").innerHTML=GRINDERS.filter(g=>(g.brand+" "+g.name+" "+g.burr+" "+g.feat.map(f=>L(GF[f])).join(" ")).toLowerCase().includes(q)).map(g=>`<details class="card eq"><summary><span class="eqIco">${grindIco(g)}</span><span class="eqTxt"><b>${esc(g.brand)} ${esc(g.name)}</b><small>${burr(g.burr)} · ${L(ADJ[g.adj])}</small></span></summary><p style="font-size:14px">${esc(L(g.note))}</p>${g.feat.map(f=>`<span class="tag on">${L(GF[f])}</span>`).join("")}${boss?`<p><button class="ghost" type="button" data-useg="${g.id}">${T("Use in my café","Gebruik in mijn café")}</button></p>`:""}</details>`).join("")};
+   $("#gm").innerHTML=allM().filter(m=>(m.brand+" "+m.name+" "+mtype(m)+" "+m.feat.map(f=>L(FUNCS[f][0])).join(" ")).toLowerCase().includes(q)).map(m=>`<details class="card eq"><summary><span class="eqIco">${machIco(m)}</span><span class="eqTxt"><b>${esc(m.brand)} ${esc(m.name)}</b><small>${mtype(m)} · ${m.groups} ${T("groups","groepen")}</small></span></summary><p style="font-size:14px">${esc(L(m.note))}</p>${m.feat.map(f=>`<span class="tag on">${L(FUNCS[f][0])}</span>`).join("")}${boss?`<p><button class="ghost" type="button" data-usem="${m.id}">${T("Use in my café","Gebruik in mijn café")}</button></p>`:""}</details>`).join("");
+   $("#gg").innerHTML=allG().filter(g=>(g.brand+" "+g.name+" "+g.burr+" "+g.feat.map(f=>L(GF[f])).join(" ")).toLowerCase().includes(q)).map(g=>`<details class="card eq"><summary><span class="eqIco">${grindIco(g)}</span><span class="eqTxt"><b>${esc(g.brand)} ${esc(g.name)}</b><small>${burr(g.burr)} · ${L(ADJ[g.adj])}</small></span></summary><p style="font-size:14px">${esc(L(g.note))}</p>${g.feat.map(f=>`<span class="tag on">${L(GF[f])}</span>`).join("")}${boss?`<p><button class="ghost" type="button" data-useg="${g.id}">${T("Use in my café","Gebruik in mijn café")}</button></p>`:""}</details>`).join("")};
  $("#gq").oninput=draw;draw();
  $("#view").onclick=e=>{const a=e.target.dataset;if(a.usem){S.machine=a.usem;save();toast(T("Machine set","Machine ingesteld"))}if(a.useg){S.grinder=a.useg;save();toast(T("Grinder set","Molen ingesteld"))}};
 };
@@ -965,7 +965,7 @@ function renderCafeBar(){const el=$("#cafeBar");if(!el)return;const ids=Object.k
 
 function cafesPanel(){const ids=Object.keys(S.cafes);stashCafe();
  const stat=id=>{const c=S.cafes[id],st=c.staff||[],so=c.signoff||{};const trained=st.filter(n=>REQ.every(k=>(so[n]||{})[k]==="ok")).length,ask=st.reduce((a,n)=>a+SKILLS.filter((_,k)=>(so[n]||{})[k]==="ask").length,0);
-   const m=MACHINES.find(x=>x.id===c.machine);return `${st.length} ${T("staff","personeel")} · ${trained} ${T("fully trained","volledig getraind")}${ask?` · <b class="warnT">${ask} ${T("to sign off","af te tekenen")}</b>`:""}${m?` · ${esc(m.brand+" "+m.name)}`:""}`};
+   const m=allM().find(x=>x.id===c.machine);return `${st.length} ${T("staff","personeel")} · ${trained} ${T("fully trained","volledig getraind")}${ask?` · <b class="warnT">${ask} ${T("to sign off","af te tekenen")}</b>`:""}${m?` · ${esc(m.brand+" "+m.name)}`:""}`};
  return `<div class="panel" id="cafesPanel"><h2>${T("Your cafés","Jouw cafés")}</h2><p class="hint">${T("Each café has its own staff, training, drinks, prices, cleaning lists and gear. Switch café at the top of the screen.","Elk café heeft eigen personeel, training, drankjes, prijzen, schoonmaaklijsten en apparatuur. Wissel van café bovenaan het scherm.")}</p>
  <div style="display:flex;flex-direction:column;gap:8px">${ids.map((id,i)=>`<div class="cafeRow${id===S.cur?" cur":""}"><span style="min-width:0"><b>${esc(cafeName(id,i))}</b>${id===S.cur?` <span class="tag on">${T("open now","nu open")}</span>`:""}<br><small class="hint">${stat(id)}</small></span>${id===S.cur?"":`<button type="button" class="ghost" data-open-cafe="${id}">${T("Open","Openen")}</button>`}</div>`).join("")}</div>
  <details style="margin-top:10px"><summary>${T("Add a café","Café toevoegen")}</summary><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
@@ -982,8 +982,38 @@ function wireCafes(){
    S.cafes[id]=c;loadCafe(id);save();go();toast(T("Café added: ","Café toegevoegd: ")+name)};
  const del=$("#delCafe");if(del)del.onclick=()=>twice(del,()=>{const gone=S.cur;delete S.cafes[gone];S.cur=Object.keys(S.cafes)[0];const c=JSON.parse(JSON.stringify(S.cafes[S.cur]));PER_CAFE.forEach(k=>{S[k]=c[k]});ensureCafeDefaults();save();go()});
 }
-{const _setup=VIEWS.setup;VIEWS.setup=()=>{_setup();$("#view").insertAdjacentHTML("beforeend",cafesPanel());wireCafes();stagger($("#view"));
+{const _setup=VIEWS.setup;VIEWS.setup=()=>{_setup();$("#view").insertAdjacentHTML("afterbegin",cafesPanel());$("#view").insertAdjacentHTML("beforeend",customGearPanel());wireCafes();wireGear();stagger($("#view"));
   const b=$("#cSave");if(b){const o=b.onclick;b.onclick=e=>{o&&o(e);renderCafeBar();const cp=$("#cafesPanel");if(cp){cp.outerHTML=cafesPanel();wireCafes()}}}}}
+
+/* ---------- your own machines and grinders ---------- */
+ADJ.stepped=B("Stepped (fixed settings)","Met vaste standen");
+const allM=()=>MACHINES.concat(S.customM||[]),allG=()=>GRINDERS.concat(S.customG||[]);
+function customGearPanel(){const cm=S.customM||[],cg=S.customG||[];
+ const fbox=(name,keys,lab)=>keys.map(k=>`<label class="row" style="gap:8px;flex-wrap:nowrap;font-size:14px"><input type="checkbox" name="${name}" value="${k}" style="width:20px;height:20px;min-height:0;flex:none">${L(lab(k))}</label>`).join("");
+ return `<div class="panel" id="gearPanel"><h3>${T("Your gear not in the list?","Staat je apparatuur er niet tussen?")}</h3><p class="hint">${T("Add your own espresso machine or grinder. It then appears in the lists above, and trainees get guides for exactly the functions you tick.","Voeg je eigen espressomachine of molen toe. Die staat daarna in de lijsten hierboven, en trainees krijgen uitleg over precies de functies die je aanvinkt.")}</p>
+ ${cm.length||cg.length?`<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">${cm.map((m,i)=>`<div class="cafeRow"><span><b>${esc(m.brand+" "+m.name)}</b><br><small class="hint">${T("Your machine","Eigen machine")} · ${m.groups} ${T("groups","groepen")}</small></span><button type="button" class="ghost" data-delm="${i}">${T("Remove","Verwijderen")}</button></div>`).join("")}${cg.map((g,i)=>`<div class="cafeRow"><span><b>${esc(g.brand+" "+g.name)}</b><br><small class="hint">${T("Your grinder","Eigen molen")} · ${esc(g.burr)}</small></span><button type="button" class="ghost" data-delg="${i}">${T("Remove","Verwijderen")}</button></div>`).join("")}</div>`:""}
+ <details><summary>${T("Add an espresso machine","Espressomachine toevoegen")}</summary><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+  <div class="grid"><label class="field"><span>${T("Brand","Merk")}</span><input id="cmBrand" placeholder="${T("e.g. Rocket","bijv. Rocket")}"></label><label class="field"><span>${T("Model","Model")}</span><input id="cmName" placeholder="${T("e.g. Boxer","bijv. Boxer")}"></label>
+  <label class="field"><span>${T("Type","Type")}</span><select id="cmType">${["trad","hx","dual","multi","super"].map(k=>`<option value="${k}">${L(TYPES[k])}</option>`).join("")}</select></label><label class="field"><span>${T("Groups","Groepen")}</span><input id="cmGroups" class="num" inputmode="numeric" value="2"></label></div>
+  <b style="font-size:14px">${T("What can it do?","Wat kan hij?")}</b><div class="grid" style="gap:4px">${fbox("cmF",Object.keys(FUNCS),k=>FUNCS[k][0])}</div>
+  <label class="field"><span>${T("Note for trainees (optional)","Notitie voor trainees (optioneel)")}</span><input id="cmNote"></label>
+  <p class="hint badT" id="cmErr" hidden>${T("Fill in the brand and model.","Vul merk en model in.")}</p><button type="button" class="btn" id="cmAdd">${T("Add machine and use it in this café","Machine toevoegen en gebruiken in dit café")}</button></div></details>
+ <details><summary>${T("Add a grinder","Molen toevoegen")}</summary><div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+  <div class="grid"><label class="field"><span>${T("Brand","Merk")}</span><input id="cgBrand" placeholder="${T("e.g. Eureka","bijv. Eureka")}"></label><label class="field"><span>${T("Model","Model")}</span><input id="cgName" placeholder="${T("e.g. Helios 65","bijv. Helios 65")}"></label>
+  <label class="field"><span>${T("Burrs","Maalschijven")}</span><input id="cgBurr" placeholder="${T("e.g. 65 mm flat","bijv. 65 mm vlak")}"></label><label class="field"><span>${T("Adjustment","Instelling")}</span><select id="cgAdj">${Object.keys(ADJ).map(k=>`<option value="${k}">${L(ADJ[k])}</option>`).join("")}</select></label></div>
+  <b style="font-size:14px">${T("What can it do?","Wat kan hij?")}</b><div class="grid" style="gap:4px">${fbox("cgF",Object.keys(GF),k=>GF[k])}</div>
+  <label class="field"><span>${T("Note for trainees (optional)","Notitie voor trainees (optioneel)")}</span><input id="cgNote"></label>
+  <p class="hint badT" id="cgErr" hidden>${T("Fill in the brand and model.","Vul merk en model in.")}</p><button type="button" class="btn" id="cgAdd">${T("Add grinder and use it in this café","Molen toevoegen en gebruiken in dit café")}</button></div></details></div>`}
+function wireGear(){const v=id=>($("#"+id)||{}).value||"",checked=n=>[...document.querySelectorAll(`input[name="${n}"]:checked`)].map(i=>i.value);
+ const am=$("#cmAdd");if(am)am.onclick=()=>{const br=v("cmBrand").trim(),nm=v("cmName").trim();if(!br||!nm){$("#cmErr").hidden=false;return}
+  const m={id:"my-m"+Date.now().toString(36),brand:br,name:nm,type:[v("cmType")],groups:String(Math.max(1,parseInt(v("cmGroups"))||1)),feat:checked("cmF"),note:v("cmNote").trim()||T("Your own machine.","Je eigen machine."),own:true};
+  S.customM=(S.customM||[]).concat(m);S.machine=m.id;save();VIEWS.setup();toast(T("Machine added","Machine toegevoegd"))};
+ const ag=$("#cgAdd");if(ag)ag.onclick=()=>{const br=v("cgBrand").trim(),nm=v("cgName").trim();if(!br||!nm){$("#cgErr").hidden=false;return}
+  const g={id:"my-g"+Date.now().toString(36),brand:br,name:nm,burr:v("cgBurr").trim()||"–",adj:v("cgAdj"),feat:checked("cgF"),note:v("cgNote").trim()||T("Your own grinder.","Je eigen molen."),own:true};
+  S.customG=(S.customG||[]).concat(g);S.grinder=g.id;save();VIEWS.setup();toast(T("Grinder added","Molen toegevoegd"))};
+ document.querySelectorAll("[data-delm]").forEach(b=>b.onclick=()=>twice(b,()=>{const m=S.customM[+b.dataset.delm];S.customM.splice(+b.dataset.delm,1);if(S.machine===m.id)S.machine=MACHINES[0].id;save();VIEWS.setup()}));
+ document.querySelectorAll("[data-delg]").forEach(b=>b.onclick=()=>twice(b,()=>{const g=S.customG[+b.dataset.delg];S.customG.splice(+b.dataset.delg,1);if(S.grinder===g.id)S.grinder=GRINDERS[0].id;save();VIEWS.setup()}));
+}
 
 go();
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
