@@ -459,7 +459,7 @@ const V=h=>{const v=$("#view");v.onchange=v.oninput=v.onclick=v.onkeydown=null;c
 function stagger(root){root.querySelectorAll(".dcards,.cards").forEach(g=>[...g.children].forEach((c,j)=>c.style.setProperty("--j",Math.min(j,14))));
   root.querySelectorAll(".bar i").forEach(b=>{const w=b.style.width;b.style.width="0";requestAnimationFrame(()=>requestAnimationFrame(()=>{b.style.width=w}))})}
 const opt=(arr,sel)=>arr.map(x=>`<option value="${x.id}"${x.id===sel?" selected":""}>${esc(x.brand+" "+x.name)}</option>`).join("");
-function twice(b,fn){if(b.dataset.armed){fn();return}b.dataset.armed=1;const t=b.textContent;b.textContent=T("Tap again to confirm","Tik nogmaals om te bevestigen");setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=t}},3000)}
+function twice(b,fn){if(b.dataset.armed){fn();return}b.dataset.armed=1;const t=b.innerHTML,st=b.getAttribute("style")||"";b.style.width=b.offsetWidth+"px";b.style.whiteSpace="normal";b.style.lineHeight="1.15";b.style.fontSize="13px";b.style.color="var(--bad)";b.style.borderColor="var(--bad)";b.textContent=T("Tap again","Nogmaals tikken");setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.innerHTML=t;b.setAttribute("style",st)}},4000)}
 function toast(t){const d=document.createElement("div");d.textContent=t;d.setAttribute("role","status");d.className="toastA";d.style.cssText="position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;font-size:14px;z-index:50";document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
 const dlg=$("#dlg");$("#dlgX").onclick=()=>dlg.close();dlg.addEventListener("close",()=>{unlockScroll();$("#dlgBody").oninput=null;if(S.section==="recipes"&&S.role==="boss")VIEWS.recipes()});dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
 let lockY=null;
@@ -580,7 +580,8 @@ function showDrink(id){const d=S.menu.find(x=>x.id===id);if(!d)return;const boss
  ${boss?`${!multi?`<p class="hint">${T("Cost per drink","Kosten per drankje")}: <b>${eur(drinkCost(d))}</b>${d.price?` · ${T("margin","marge")} <b>${fmt((1-drinkCost(d)/(d.price/(1+vat/100)))*100,0)} %</b>`:""}</p>`:""}
  <div class="panel" style="margin:0;padding:12px"><b>${T("Price","Prijs")}</b> <small class="hint">${T("incl. VAT · saves straight away","incl. btw · wordt meteen opgeslagen")}</small><div class="row" style="margin-top:6px">${(Array.isArray(d.sizes)&&d.sizes.length?d.sizes.map((s,si)=>[si,L(s.label)||s.size,s.price]):[[-1,d.size,d.price]]).map(([si,lab,pr])=>`<label class="row" style="flex-wrap:nowrap;gap:4px"><small class="hint">${esc(lab||"")}</small>€<input class="num" inputmode="decimal" data-qp="${si}" value="${pr?(+pr).toFixed(2).replace(".",S.lang==="nl"?",":"."):""}" style="width:80px" aria-label="${T("Price","Prijs")} ${esc(lab||"")}"></label>`).join("")}</div></div>
  <div class="row"><button class="btn" type="button" id="dEdit">${T("Edit","Bewerken")}</button><button class="ghost" type="button" id="dCopy">${T("Duplicate","Dupliceren")}</button><button class="ghost" type="button" id="dHide">${d.hidden?T("Show on menu","Op menu zetten"):T("Hide from menu","Verbergen")}</button></div>
- <div class="row"><button class="ghost" type="button" id="dUp" aria-label="${T("Move earlier","Naar voren")}">← ${T("Earlier","Eerder")}</button><button class="ghost" type="button" id="dDown">${T("Later","Later")} →</button><button class="ghost" type="button" id="dDel">${T("Delete","Verwijderen")}</button></div>`:""}`);
+ <div class="row"><button class="ghost" type="button" id="dUp" aria-label="${T("Move earlier","Naar voren")}">← ${T("Earlier","Eerder")}</button><button class="ghost" type="button" id="dDown">${T("Later","Later")} →</button></div>
+ <div class="row"><button class="ghost badT" type="button" id="dDel" style="min-width:150px">🗑 ${T("Delete drink","Drankje verwijderen")}</button></div>`:""}`);
  if(!boss)return;
  const mv=dir=>{const i=S.menu.indexOf(d),j=i+dir;if(j<0||j>=S.menu.length)return;[S.menu[i],S.menu[j]]=[S.menu[j],S.menu[i]];save();VIEWS.recipes();toast(T("Moved","Verplaatst"))};
  $("#dlgBody").oninput=e=>{const q=e.target.dataset.qp;if(q==null)return;const v=num(e.target.value),pr=isFinite(v)&&v>=0?v:0;if(+q>=0)d.sizes[+q].price=pr;else d.price=pr;save()};
@@ -588,7 +589,7 @@ function showDrink(id){const d=S.menu.find(x=>x.id===id);if(!d)return;const boss
  $("#dHide").onclick=()=>{d.hidden=!d.hidden;save();dlg.close();VIEWS.recipes()};
  $("#dEdit").onclick=()=>editDrink(d);
  $("#dCopy").onclick=()=>{const c=clone(d);c.id="d"+Date.now().toString(36);c.name=L(d.name)+" 2";S.menu.splice(S.menu.indexOf(d)+1,0,c);save();dlg.close();VIEWS.recipes();editDrink(c)};
- $("#dDel").onclick=e=>twice(e.target,()=>{S.menu=S.menu.filter(x=>x.id!==d.id);save();dlg.close();VIEWS.recipes()});
+ $("#dDel").onclick=e=>twice(e.currentTarget,()=>{S.menu=S.menu.filter(x=>x.id!==d.id);save();dlg.close();VIEWS.recipes()});
 }
 function pickTemplate(){
  openDlg("",`<h2>${T("Add a drink","Drankje toevoegen")}</h2><p class="hint" style="margin:0">${T("Start from a template and change it to your café's recipe, or start empty.","Begin met een sjabloon en pas het aan op het recept van je café, of begin leeg.")}</p>
