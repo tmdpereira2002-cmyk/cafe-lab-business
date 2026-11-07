@@ -164,6 +164,12 @@ details.rList.full>summary{color:var(--good)}details.rList[open]{padding-bottom:
 .stageH{margin:14px 0 4px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.stageH:first-child{margin-top:4px}
 .locked{opacity:.6}
 .tcardNext{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;border:1px solid var(--crema);background:var(--crema-soft);color:var(--ink);border-radius:16px;padding:12px 14px;margin-bottom:12px;font:inherit;cursor:pointer}.tcardNext small{color:var(--muted);font-weight:600}.tcardNext b{font-size:17px}.tcardNext span{color:var(--ink);font-weight:700;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.dialStat{margin:10px 0 4px;padding:10px 12px;border-radius:12px;background:var(--sunk);font-weight:700}
+.tasteRow{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.tBtn{min-height:52px;padding:6px 4px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:600 13px var(--body);cursor:pointer;line-height:1.15}
+.tBtn[aria-pressed="true"]{background:var(--crema);border-color:var(--crema);color:var(--on-crema)}
+.dialAdv{margin-top:12px;padding:12px 14px;border:2px solid var(--crema);border-radius:14px;background:var(--crema-soft)}.dialAdv.good{border-color:var(--good)}.dialAdv h3{margin:0 0 6px}.dialAdv ol{margin:0;padding-left:20px}.dialAdv li{margin:4px 0}
+.dialRow{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:15px}.dialRow>span:first-child{width:18px;flex:none;font-weight:700}
+.rDial{flex:none;align-self:center;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--crema);background:var(--crema);color:var(--on-crema);font:700 14px var(--body);cursor:pointer;white-space:nowrap}
 </style></head><body>
 <header><div class="wrap">
   <div class="top"><div class="row" style="gap:10px;flex-wrap:nowrap"><img src="icon-192.png" alt="" width="36" height="36" style="flex:none;border-radius:9px"><h1>Café Lab <span style="color:var(--crema)">Business</span></h1></div><div class="row" style="gap:8px;flex-wrap:nowrap"><span style="position:relative"><button type="button" class="lang" id="langBtn" aria-label="Language" aria-haspopup="true" aria-expanded="false">EN</button><span id="langMenu" class="langMenu" hidden><button type="button" data-lang="en">English</button><button type="button" data-lang="nl">Nederlands</button><button type="button" data-lang="pt">Português</button></span></span><a href="https://tmdpereira2002-cmyk.github.io/Cafe-lab/" id="persLink" class="persBtn">Café Lab →</a></div></div>
@@ -532,14 +538,14 @@ if((S.menuVer||1)<2){const old=["espresso","americano","cortado","flatwhite","ca
 /* ---------- menus ---------- */
 const ICO={day:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M8.5 11l2 2 4-4M8.5 16.5h7"/>',today:'<path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-6h4v6"/>',team:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.3c2.8.3 5 2.6 5 5.7"/>',menu:'<path d="M5 9h12v5a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M9 3c-1 1.2 1 2 0 3.5M13 3c-1 1.2 1 2 0 3.5"/>',cafe:'<path d="M3 10h18l-2-5H5z"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/>',learn:'<path d="M3 6c3-1.5 6-1.5 9 0 3-1.5 6-1.5 9 0v13c-3-1.5-6-1.5-9 0-3-1.5-6-1.5-9 0z"/><path d="M12 6v13"/>',path:'<path d="M12 3l8 4-8 4-8-4z"/><path d="M6 9v5c0 2 3 3.5 6 3.5s6-1.5 6-3.5V9"/>',bar:'<rect x="5" y="4" width="14" height="10" rx="2"/><path d="M9 14v3h6v-3M8 20h8"/>'};
 const GROUPS={
- boss:[["today",B("Today","Vandaag"),["today"]],["team",B("Team","Team"),["staff"]],["menu",B("Menu","Menu"),["recipes","cost","order","breakeven"]],["cafe",B("Café","Café"),["setup","filter","routine","gear"]],["learn",B("Learn","Leren"),["tools","know"]]],
- trainee:[["day",B3("Today","Vandaag","Hoje"),["routine"]],["path",B("Training","Training"),["path"]],["menu",B("Drinks","Drankjes"),["recipes"]],["bar",B("Bar","Bar"),["machine","grinder","filter"]],["learn",B("Learn","Leren"),["tools","know","gear"]]]
+ boss:[["today",B("Today","Vandaag"),["today"]],["team",B("Team","Team"),["staff"]],["menu",B("Menu","Menu"),["recipes","cost","order","breakeven"]],["cafe",B("Café","Café"),["setup","dial","filter","routine","gear"]],["learn",B("Learn","Leren"),["tools","know"]]],
+ trainee:[["day",B3("Today","Vandaag","Hoje"),["routine"]],["path",B("Training","Training"),["path"]],["menu",B("Drinks","Drankjes"),["recipes"]],["bar",B("Bar","Bar"),["dial","machine","grinder","filter"]],["learn",B("Learn","Leren"),["tools","know","gear"]]]
 };
 const groupOf=k=>GROUPS[S.role].find(g=>g[2].includes(k))||GROUPS[S.role][0];
 function openSec(k){S.section=k;go()}
 const MENUS={
- boss:[["today",B("Today","Vandaag")],["setup",B("Café setup","Café-instellingen")],["filter",B3("Filter coffee","Filterkoffie","Café de filtro")],["staff",B("Staff training","Training personeel")],["recipes",B("House drinks","Huisdrankjes")],["cost",B("Cost & margin","Kosten & marge")],["order",B("Order planner","Bestelplanner")],["breakeven",B("Break-even","Break-even")],["routine",B("Cleaning & routines","Schoonmaak & routines")],["tools",B("Calculators","Rekenhulpen")],["know",B("Coffee knowledge","Koffiekennis")],["gear",B("Equipment guide","Apparatuurgids")]],
- trainee:[["routine",B("Daily routines","Dagelijkse routines")],["path",B("My training","Mijn training")],["recipes",B("House drinks","Huisdrankjes")],["machine",B("Our machine","Onze machine")],["grinder",B("Our grinder","Onze molen")],["filter",B3("Our filter","Onze filter","O nosso filtro")],["tools",B("Calculators","Rekenhulpen")],["know",B("Coffee knowledge","Koffiekennis")],["gear",B("Equipment guide","Apparatuurgids")]]
+ boss:[["today",B("Today","Vandaag")],["setup",B("Café setup","Café-instellingen")],["dial",B3("Dial-in","Instellen","Afinação")],["filter",B3("Filter coffee","Filterkoffie","Café de filtro")],["staff",B("Staff training","Training personeel")],["recipes",B("House drinks","Huisdrankjes")],["cost",B("Cost & margin","Kosten & marge")],["order",B("Order planner","Bestelplanner")],["breakeven",B("Break-even","Break-even")],["routine",B("Cleaning & routines","Schoonmaak & routines")],["tools",B("Calculators","Rekenhulpen")],["know",B("Coffee knowledge","Koffiekennis")],["gear",B("Equipment guide","Apparatuurgids")]],
+ trainee:[["routine",B("Daily routines","Dagelijkse routines")],["path",B("My training","Mijn training")],["recipes",B("House drinks","Huisdrankjes")],["machine",B("Our machine","Onze machine")],["dial",B3("Dial-in","Instellen","Afinação")],["grinder",B("Our grinder","Onze molen")],["filter",B3("Our filter","Onze filter","O nosso filtro")],["tools",B("Calculators","Rekenhulpen")],["know",B("Coffee knowledge","Koffiekennis")],["gear",B("Equipment guide","Apparatuurgids")]]
 };
 function renderMenu(){
   REQ=reqFor(S.filter);
@@ -551,6 +557,7 @@ function renderMenu(){
   const grp=groupOf(S.section),sub=list.filter(x=>grp[2].includes(x[0]));
   $("#menu").hidden=sub.length<2;
   $("#menu").innerHTML=sub.length<2?"":sub.map(([k,l])=>`<button type="button" data-sec="${k}" aria-current="${k===S.section}">${L(l)}</button>`).join("");
+  {const mn=$("#menu"),cb=mn.querySelector("[aria-current=true]");if(cb){const r=cb.offsetLeft+cb.offsetWidth/2-mn.clientWidth/2;mn.scrollLeft=Math.max(0,r)}}
   $("#bnav").innerHTML=GROUPS[S.role].map(([g,l,secs])=>`<button type="button" data-grp="${g}" aria-current="${g===grp[0]}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[g]}</svg><span>${L(l)}</span>${g==="day"&&g!==grp[0]&&rLeft()?`<b class="nBadge">${rLeft()}</b>`:""}</button>`).join("");
 }
 function lockView(){V(`<div class="panel"><h2>${T("Manager PIN","Manager-pincode")}</h2><p class="hint">${T("Enter the PIN to open the boss menu.","Voer de pincode in om het menu van de baas te openen.")}</p><div class="row"><input id="pinIn" inputmode="numeric" style="flex:1;min-width:120px"><button class="btn" id="pinGo" type="button">${T("Open","Openen")}</button></div><p class="hint badT" id="pinErr" hidden>${T("Wrong PIN. Try again.","Verkeerde pincode. Probeer het opnieuw.")}</p></div>`);$("#pinGo").onclick=()=>{if($("#pinIn").value===S.pin){S.role="boss";S.section=null;go()}else $("#pinErr").hidden=false}}
@@ -619,7 +626,7 @@ VIEWS.filter=()=>{const fl=S.filter||{},br=FILTER_GEAR.find(x=>x.id===fl.brewer)
 let rEditing=null;const rOpen={};
 const isoWeek=d=>{const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return t.getUTCFullYear()+"-W"+Math.ceil(((t-y)/864e5+1)/7)};
 function rPrep(){const now=new Date(),day=now.toISOString().slice(0,10),wk=isoWeek(now);if(!S.clean||S.clean.day!==day)S.clean={day};if(!S.cleanW||S.cleanW.week!==wk)S.cleanW={week:wk}}
-const rDone=(sec,it)=>(sec.weekly?(S.cleanW||{}):(S.clean||{}))[it.id]||false;
+const rDone=(sec,it)=>{if(it.dial){const o=dialOk();return o?{t:hhmm(o.at),by:o.by||""}:false}return (sec.weekly?(S.cleanW||{}):(S.clean||{}))[it.id]||false};
 // the list that fits the time of day: opening in the morning, service in the day, closing in the evening
 function rCurrent(){const h=new Date().getHours(),L_=S.routines||[],has=id=>L_.find(x=>x.id===id),daily=L_.filter(x=>!x.weekly);const pref=h<11?"open":h<17?"hourly":"close";
  const p=has(pref);if(p&&p.items.some(it=>!rDone(p,it)))return p.id;const u=daily.find(x=>x.items.some(it=>!rDone(x,it)));return u?u.id:(p?p.id:"")}
@@ -632,6 +639,72 @@ function lockedFor(me,k){if(isOpt(k))return null;const st=S.signoff[me]||{},qz=(
  for(let i=0;i<si;i++){const miss=STAGES[i].ks.filter(x=>REQ.includes(x)&&!(qz[x]||st[x]==="ok"));if(miss.length)return STAGES[i]}return null}
 function nextLesson(){const me=S.me&&S.staff.includes(S.me)?S.me:"";if(!me)return null;const st=S.signoff[me]||{},qz=(S.quiz||{})[me]||{};return REQ.find(k=>!qz[k]&&st[k]!=="ok"&&!lockedFor(me,k))??null}
 const byStage=(keys,fn)=>STAGES.map(g=>{const ks=g.ks.filter(k=>keys.includes(k));return ks.length?`<h4 class="stageH">${L(g.name)}</h4>`+ks.map(fn).join(""):""}).join("");
+// ---------- Dial-in: log every check shot; on target = ready for service ----------
+const TASTE5=[[-2,B3("Very sour","Heel zuur","Muito ácido")],[-1,B3("Sour","Zuur","Ácido")],[0,B3("Balanced","In balans","Equilibrado")],[1,B3("Bitter","Bitter","Amargo")],[2,B3("Very bitter","Heel bitter","Muito amargo")]];
+const dayKey=d=>{const x=d?new Date(d):new Date();return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0")};
+const hhmm=d=>{const x=new Date(d);return String(x.getHours()).padStart(2,"0")+":"+String(x.getMinutes()).padStart(2,"0")};
+function dialTarget(){const t=(S.dial&&S.dial.target)||{};if(t.dose)return t;const d=S.menu.find(x=>x.key==="doubleespresso")||S.menu.find(x=>x.key==="espresso"&&x.dose>=14)||{};const m=String(d.time||"").match(/(\d+)\D+(\d+)/);
+ return {dose:d.dose||18,yield:d.yield||36,lo:m?Math.min(+m[1],25):25,hi:m?Math.max(+m[2],32):32}}
+const dialLog=()=>((S.dial||{}).log||[]);
+const dialToday=()=>dialLog().filter(x=>x.day===dayKey());
+const dialOk=()=>dialToday().find(x=>x.ok)||null;
+function dialAdvice(x){const tg=dialTarget(),m=mach(),g=grind(),sps=+(S.dial&&S.dial.sps)||2,mid=(tg.lo+tg.hi)/2,out=[];let ok=false;
+ const has=f=>m.feat.includes(f),gtime=g.feat.includes("time"),yOff=x.yield-tg.yield,dOff=x.dose-tg.dose;
+ const fast=x.time<tg.lo,slow=x.time>tg.hi,steps=Math.max(1,Math.round(Math.abs(x.time-mid)/sps));
+ const finer=n=>T3(`Grind ${n} step${n>1?"s":""} finer on the ${g.brand} ${g.name}.`,`Maal ${n} stap${n>1?"pen":""} fijner op de ${g.brand} ${g.name}.`,`Mói ${n} passo${n>1?"s":""} mais fino no ${g.brand} ${g.name}.`);
+ const coarser=n=>T3(`Grind ${n} step${n>1?"s":""} coarser on the ${g.brand} ${g.name}.`,`Maal ${n} stap${n>1?"pen":""} grover op de ${g.brand} ${g.name}.`,`Mói ${n} passo${n>1?"s":""} mais grosso no ${g.brand} ${g.name}.`);
+ if(Math.abs(dOff)>0.5)out.push(T3(`First fix the dose: weigh ${fmt(tg.dose,1)} g (this shot had ${fmt(x.dose,1)} g).`,`Zet eerst de dosis goed: weeg ${fmt(tg.dose,1)} g (deze shot had ${fmt(x.dose,1)} g).`,`Primeiro acerta a dose: pesa ${fmt(tg.dose,1)} g (esta extração teve ${fmt(x.dose,1)} g).`)+(g.feat.includes("gbw")?" "+T3("Check the grind-by-weight setting on the grinder.","Controleer de gewichtsinstelling op de molen.","Verifica a regulação de peso no moinho."):gtime?" "+T3("On a time-dosed grinder, change the dose time a little.","Pas bij een molen met tijddosering de maaltijd iets aan.","Num moinho por tempo, ajusta um pouco o tempo de moagem."):""));
+ if(Math.abs(yOff)>2)out.push(T3(`Stop the shot at ${tg.yield} g in the cup (this one gave ${fmt(x.yield,0)} g).`,`Stop de shot bij ${tg.yield} g in het kopje (deze gaf ${fmt(x.yield,0)} g).`,`Para a extração nos ${tg.yield} g na chávena (esta deu ${fmt(x.yield,0)} g).`)+(has("vol")?" "+T3("If you use the programmed buttons, reprogram them once the time is right.","Gebruik je de geprogrammeerde knoppen, programmeer ze dan opnieuw als de tijd klopt.","Se usas os botões programados, volta a programá-los quando o tempo estiver certo."):""));
+ if(fast||slow){
+  const disagree=(fast&&x.taste>0)||(slow&&x.taste<0);
+  if(disagree)out.push(T3("The taste and the time disagree. That usually means channelling: check distribution, a level tamp and a clean, dry basket before you change the grind.","Smaak en tijd zijn het oneens. Dat is meestal channeling: controleer verdeling, recht tampen en een schoon, droog filter voordat je de maling verandert.","O sabor e o tempo não batem certo. Normalmente é canalização: verifica a distribuição, o calcar direito e um filtro limpo e seco antes de mudar a moagem."));
+  else out.push((fast?T3(`It ran ${fmt(x.time,0)} s, faster than ${tg.lo}–${tg.hi} s. `,`Hij liep ${fmt(x.time,0)} s, sneller dan ${tg.lo}–${tg.hi} s. `,`Correu ${fmt(x.time,0)} s, mais depressa do que ${tg.lo}–${tg.hi} s. `):T3(`It ran ${fmt(x.time,0)} s, slower than ${tg.lo}–${tg.hi} s. `,`Hij liep ${fmt(x.time,0)} s, trager dan ${tg.lo}–${tg.hi} s. `,`Correu ${fmt(x.time,0)} s, mais devagar do que ${tg.lo}–${tg.hi} s. `))+(fast?finer(steps):coarser(steps)));
+  if(!disagree&&fast&&gtime)out.push(T3("Going finer makes a time-dosed grinder give less coffee: weigh the next dose and add a little time if it's light.","Fijner malen geeft bij tijddosering minder koffie: weeg de volgende dosis en voeg wat tijd toe als die te licht is.","Moer mais fino dá menos café num moinho por tempo: pesa a próxima dose e aumenta um pouco o tempo se estiver leve."));
+  out.push(T3("Purge one dose after changing the grind, then pull and log the next shot.","Maal na het verstellen één dosis weg, zet dan de volgende shot en log die.","Depois de mudar a moagem deita fora uma dose, e tira e regista a extração seguinte."));
+ }else if(x.taste===0&&Math.abs(yOff)<=2&&Math.abs(dOff)<=0.5){ok=true;out.push(T3("On target: right time, right weight, balanced taste. The espresso is ready for service.","Op doel: goede tijd, goed gewicht, smaak in balans. De espresso is klaar voor service.","No ponto: tempo certo, peso certo, sabor equilibrado. O espresso está pronto para o serviço."))}
+ else if(x.taste!==0){const sour=x.taste<0;
+  out.push(T3(`The time is right but it tastes ${sour?"sour":"bitter"}.`,`De tijd klopt, maar hij smaakt ${sour?"zuur":"bitter"}.`,`O tempo está certo, mas sabe a ${sour?"ácido":"amargo"}.`)+" "+(has("pid")?T3(`Set the brew temperature 1 °C ${sour?"hotter":"cooler"} on the ${m.brand} ${m.name}, wait 10 minutes and pull a new shot.`,`Zet de zettemperatuur 1 °C ${sour?"hoger":"lager"} op de ${m.brand} ${m.name}, wacht 10 minuten en zet een nieuwe shot.`,`Põe a temperatura 1 °C ${sour?"mais alta":"mais baixa"} na ${m.brand} ${m.name}, espera 10 minutos e tira nova extração.`)
+   :(sour?finer(1)+" "+T3("Taste wins over the clock.","Smaak gaat voor de klok.","O sabor manda mais do que o relógio."):coarser(1)+" "+T3("Taste wins over the clock.","Smaak gaat voor de klok.","O sabor manda mais do que o relógio."))))}
+ if(has("pre")&&!ok)out.push(T3("Keep the pre-infusion the same while you dial in.","Houd de pre-infusie gelijk terwijl je instelt.","Mantém a pré-infusão igual enquanto afinas."));
+ return {ok,out}}
+VIEWS.dial=()=>{S.dial=S.dial||{log:[]};const tg=dialTarget(),boss=S.role==="boss",m=mach(),g=grind(),today=dialToday(),okS=dialOk(),me=S.me&&S.staff.includes(S.me)?S.me:"",last=today[today.length-1];
+ const days=[...new Set(dialLog().map(x=>x.day))].sort().reverse().slice(0,7);
+ V(`<div class="panel"><h2>${T3("Dial-in","Instellen","Afinação")}</h2>
+ <p class="hint" style="margin:0">${T3("Every morning: pull a check shot, weigh and time it, taste it, log it here. Repeat until it says ready for service.","Elke ochtend: zet een controleshot, weeg en time hem, proef hem en log hem hier. Herhaal tot er klaar voor service staat.","Todas as manhãs: tira uma extração de controlo, pesa, cronometra, prova e regista aqui. Repete até dizer pronto para o serviço.")}</p>
+ <div class="dialStat ${okS?"ok":"warnT"}">${okS?`✓ ${T3("Ready for service","Klaar voor service","Pronto para o serviço")} · ${hhmm(okS.at)}${okS.by?" · "+esc(okS.by):""}`:`⏳ ${T3("Not dialled in yet today","Vandaag nog niet ingesteld","Ainda não afinado hoje")}`}</div>
+ <p class="hint">${T3("House target","Huisdoel","Objetivo da casa")}: <b>${fmt(tg.dose,1)} g → ${tg.yield} g ${T3("in","in","em")} ${tg.lo}–${tg.hi} s</b> · ${esc(m.brand+" "+m.name)} · ${esc(g.brand+" "+g.name)}</p></div>
+ <div class="panel"><h3>${T3("Log a shot","Shot loggen","Registar extração")}</h3>
+ <div class="grid">
+  ${boss?"":`<label class="field"><span>${T3("Barista","Barista","Barista")}</span><select id="dWho"><option value="">${T("— choose your name —","— kies je naam —")}</option>${S.staff.map(n=>`<option${n===me?" selected":""}>${esc(n)}</option>`).join("")}</select></label>`}
+  <label class="field"><span>${T3("Grinder setting","Maalstand","Regulação do moinho")}</span><input id="dGrind" value="${esc(last?last.grind:(S.dial.lastGrind||""))}" placeholder="${T3("e.g. 4.5","bijv. 4,5","p. ex. 4,5")}"></label>
+  <label class="field"><span>${T3("Dose in (g)","Dosis (g)","Dose (g)")}</span><input id="dDose" class="num" inputmode="decimal" value="${fmt(tg.dose,1)}"></label>
+  <label class="field"><span>${T3("Yield out (g)","Opbrengst (g)","Rendimento (g)")}</span><input id="dYield" class="num" inputmode="decimal" placeholder="${tg.yield}"></label>
+  <label class="field"><span>${T3("Time (s)","Tijd (s)","Tempo (s)")}</span><input id="dTime" class="num" inputmode="decimal" placeholder="${Math.round((tg.lo+tg.hi)/2)}"></label>
+ </div>
+ <p style="margin:12px 0 6px"><b>${T3("How does it taste?","Hoe smaakt hij?","Como sabe?")}</b></p><div class="tasteRow">${TASTE5.map(([v,l])=>`<button type="button" class="tBtn" data-taste="${v}" aria-pressed="false">${L(l)}</button>`).join("")}</div>
+ <button type="button" class="btn" id="dLog" style="margin-top:12px;width:100%">${T3("Log shot and get advice","Shot loggen en advies krijgen","Registar e receber conselho")}</button>
+ <div id="dOut"></div></div>
+ ${today.length?`<div class="panel"><h3>${T3("Today's shots","Shots van vandaag","Extrações de hoje")}</h3>${today.slice().reverse().map(x=>`<div class="dialRow"><span class="${x.ok?"ok":""}">${x.ok?"✓":"•"}</span><span><b>${hhmm(x.at)}</b>${x.by?" · "+esc(x.by):""} · ${esc(x.grind||"–")} · ${fmt(x.dose,1)} → ${fmt(x.yield,0)} g · ${fmt(x.time,0)} s · ${L(TASTE5.find(t=>t[0]===x.taste)[1])}</span></div>`).join("")}</div>`:""}
+ ${boss?`<div class="panel"><h3>${T3("Last 7 days","Afgelopen 7 dagen","Últimos 7 dias")}</h3>${days.length?days.map(d=>{const L_=dialLog().filter(x=>x.day===d),o=L_.find(x=>x.ok);return `<div class="dialRow"><span class="${o?"ok":"badT"}">${o?"✓":"✗"}</span><span><b>${new Date(d+"T12:00").toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"short"})}</b> · ${L_.length} ${T3("shots","shots","extrações")}${o?` · ${T3("ready","klaar","pronto")} ${hhmm(o.at)}${o.by?" · "+esc(o.by):""}`:` · ${T3("never on target","nooit op doel","nunca no ponto")}`}</span></div>`}).join(""):`<p class="hint">${T3("No shots logged yet.","Nog geen shots gelogd.","Ainda não há extrações registadas.")}</p>`}</div>
+ <details class="panel"><summary>${T3("House target and grinder","Huisdoel en molen","Objetivo da casa e moinho")}</summary><div class="grid" style="margin-top:8px">
+  <label class="field"><span>${T3("Dose (g)","Dosis (g)","Dose (g)")}</span><input class="num" data-tg="dose" inputmode="decimal" value="${fmt(tg.dose,1)}"></label>
+  <label class="field"><span>${T3("Yield (g)","Opbrengst (g)","Rendimento (g)")}</span><input class="num" data-tg="yield" inputmode="decimal" value="${tg.yield}"></label>
+  <label class="field"><span>${T3("Fastest time (s)","Snelste tijd (s)","Tempo mínimo (s)")}</span><input class="num" data-tg="lo" inputmode="decimal" value="${tg.lo}"></label>
+  <label class="field"><span>${T3("Slowest time (s)","Traagste tijd (s)","Tempo máximo (s)")}</span><input class="num" data-tg="hi" inputmode="decimal" value="${tg.hi}"></label>
+  <label class="field"><span>${T3("Seconds per grinder step","Seconden per maalstap","Segundos por passo do moinho")}</span><input class="num" id="dSps" inputmode="decimal" value="${fmt(+(S.dial.sps||2),1)}"></label></div>
+  <p class="hint">${T3("How much one step on your grinder changes the shot time. Watch a few changes and set it here.","Hoeveel één stap op je molen de shottijd verandert. Let op een paar aanpassingen en zet het hier.","Quanto um passo no moinho muda o tempo da extração. Observa algumas mudanças e põe aqui.")}</p></details>`:""}`);
+ let taste=null;const v=$("#view");
+ v.querySelectorAll("[data-taste]").forEach(b=>b.onclick=()=>{taste=+b.dataset.taste;v.querySelectorAll("[data-taste]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))});
+ const w=$("#dWho");if(w)w.onchange=()=>{S.me=w.value;save()};
+ v.querySelectorAll("[data-tg]").forEach(i=>i.onchange=()=>{const t=dialTarget();S.dial.target={...t,[i.dataset.tg]:num(i.value)};save();VIEWS.dial()});
+ const sp=$("#dSps");if(sp)sp.onchange=()=>{S.dial.sps=num(sp.value)||2;save()};
+ $("#dLog").onclick=()=>{const x={dose:num($("#dDose").value),yield:num($("#dYield").value),time:num($("#dTime").value),taste,grind:$("#dGrind").value.trim()};
+  if(![x.dose,x.yield,x.time].every(n=>isFinite(n)&&n>0)||taste==null){$("#dOut").innerHTML=`<p class="badT">${T3("Fill in dose, yield and time, and pick how it tastes.","Vul dosis, opbrengst en tijd in, en kies hoe hij smaakt.","Preenche dose, rendimento e tempo, e escolhe o sabor.")}</p>`;return}
+  if(!boss&&!(S.me&&S.staff.includes(S.me))&&S.staff.length){$("#dOut").innerHTML=`<p class="badT">${T3("Choose your name first, so the boss knows who dialled in.","Kies eerst je naam, zodat de baas weet wie heeft ingesteld.","Escolhe primeiro o teu nome, para o patrão saber quem afinou.")}</p>`;return}
+  const a=dialAdvice(x),now=new Date();S.dial.log=(S.dial.log||[]).filter(e=>e.day>=dayKey(now.getTime()-60*864e5));
+  S.dial.log.push({...x,at:now.toISOString(),day:dayKey(now),by:boss?T3("manager","manager","gerente"):S.me||"",ok:a.ok});S.dial.lastGrind=x.grind;save();
+  if(a.ok)toast(T3("Espresso ready for service ✓","Espresso klaar voor service ✓","Espresso pronto para o serviço ✓"));
+  VIEWS.dial();$("#dOut").innerHTML=`<div class="dialAdv ${a.ok?"good":""}"><h3>${a.ok?"✓ "+T3("Ready for service","Klaar voor service","Pronto para o serviço"):T3("Next shot","Volgende shot","Próxima extração")}</h3><ol>${a.out.map(t=>`<li>${t}</li>`).join("")}</ol>${a.ok?"":`<p class="hint">${T3("Change one thing, then log the next shot.","Verander één ding en log dan de volgende shot.","Muda uma coisa e regista a extração seguinte.")}</p>`}</div>`;$("#dOut").scrollIntoView({block:"center"})}};
 VIEWS.today=()=>{
  const vat=typeof vatNow==="function"?vatNow():9;
  const staff=S.staff.map(n=>{const st=S.signoff[n]||{};return {n,done:REQ.filter(k=>st[k]==="ok").length,ask:SKILLS.filter((_,k)=>st[k]==="ask").length}});
@@ -643,6 +716,7 @@ VIEWS.today=()=>{
  const card=(sec,big,label,alert)=>`<button type="button" class="tcard${alert?" alert":""}" data-sec="${sec}"><b>${big}</b><span>${label}</span></button>`;
  V(`<div class="today"><h2>${S.cafe?esc(S.cafe):T("Today","Vandaag")}</h2><p class="hint">${new Date().toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long"})}</p>
  <div class="tgrid">
+  ${(()=>{const o=dialOk();return card("dial",o?"✓":"✗",o?T3(`espresso dialled in at ${hhmm(o.at)}`+(o.by?` by ${o.by}`:""),`espresso ingesteld om ${hhmm(o.at)}`+(o.by?` door ${o.by}`:""),`espresso afinado às ${hhmm(o.at)}`+(o.by?` por ${o.by}`:"")):T3("espresso not dialled in yet","espresso nog niet ingesteld","espresso ainda não afinado"),!o)})()}
   ${card("staff",asks,T("skills waiting for your sign-off","vaardigheden wachten op je handtekening"),asks>0)}
   ${card("staff",`${trained}/${staff.length}`,T("baristas fully trained","barista's volledig getraind"))}
   ${card("routine",`${ticked}/${tasks}`,T("cleaning tasks ticked today","schoonmaaktaken vandaag afgevinkt"),tasks&&ticked<tasks&&new Date().getHours()>=18)}
@@ -929,7 +1003,10 @@ VIEWS.breakeven=()=>{
 /* routines: the boss's own lists; each section {id,name,weekly,items:[{id,t}]} */
 const uid=()=>Math.random().toString(36).slice(2,9);
 const FILTER_LIST=()=>({id:"filter",name:B3("Filter coffee (daily)","Filterkoffie (dagelijks)","Café de filtro (diário)"),items:[{id:"filter0",t:B3("Write the brew time on every thermos; pour away coffee older than 45 minutes","Schrijf de zettijd op elke thermoskan; giet koffie ouder dan 45 minuten weg","Escreve a hora em cada termo; deita fora café com mais de 45 minutos")},{id:"filter1",t:B3("Check the first batch: weigh the coffee, taste it, adjust the grind","Controleer de eerste batch: weeg de koffie, proef, stel de maling bij","Verifica a primeira fornada: pesa o café, prova, ajusta a moagem")},{id:"filter2",t:B3("Wash the brew basket and spray head","Was de filterhouder en de sproeikop","Lava o porta-filtro e o chuveiro")},{id:"filter3",t:B3("Clean thermoses and servers with coffee cleaner, rinse well","Maak thermoskannen en servers schoon met koffiereiniger, goed naspoelen","Limpa termos e servidores com detergente de café e enxagua bem")},{id:"filter4",t:B3("Brush out the filter grinder","Borstel de filtermolen schoon","Escova o moinho do filtro")}]});
-const defRoutines=()=>Object.entries(ROUTINES).map(([k,[name,list]])=>({id:k,name,weekly:k==="weekly",items:list.map((t,i)=>({id:k+i,t}))}));
+const DIAL_ITEM=()=>({id:"dialin",dial:true,t:B3("Dial in the espresso: log check shots until it says ready for service","Stel de espresso in: log controleshots tot er klaar voor service staat","Afina o espresso: regista extrações de controlo até dizer pronto para o serviço")});
+const addDialItem=lists=>{if(lists.some(l=>l.items.some(it=>it.dial)))return;const o=lists.find(l=>l.id==="open")||lists.find(l=>!l.weekly);if(!o)return;
+ const k=o.items.findIndex(it=>/^Pull a check shot/.test((it.t&&it.t.en)||it.t||""));if(k>=0){o.items.splice(k,1,DIAL_ITEM());const k2=o.items.findIndex(it=>/^Taste and log the check shot/.test((it.t&&it.t.en)||it.t||""));if(k2>=0)o.items.splice(k2,1)}else o.items.splice(Math.min(4,o.items.length),0,DIAL_ITEM())};
+const defRoutines=()=>{const l=Object.entries(ROUTINES).map(([k,[name,list]])=>({id:k,name,weekly:k==="weekly",items:list.map((t,i)=>({id:k+i,t}))}));addDialItem(l);return l};
 if(!Array.isArray(S.routines))S.routines=defRoutines();
 let rEdit=false;
 VIEWS.routine=()=>{
@@ -938,6 +1015,7 @@ VIEWS.routine=()=>{
  const me=S.me&&S.staff.includes(S.me)?S.me:"";
  const row=(sec,it,si,ii)=>{const d=rDone(sec,it),meta=d&&typeof d==="object"?`<small class="rMeta">${esc(d.t||"")}${d.by?" · "+esc(d.by):""}</small>`:"";
   if(boss&&rEditing===it.id)return `<div class="rEdit"><textarea data-item="${si}|${ii}" rows="2" aria-label="${T3("Task","Taak","Tarefa")}">${esc(L(it.t))}</textarea><div class="row" style="gap:6px"><button type="button" class="btn" data-editdone="1">${T3("Save","Opslaan","Guardar")}</button><button type="button" class="ghost" data-iup="${si}|${ii}"${ii?"":" disabled"}>↑ ${T3("Up","Omhoog","Subir")}</button><button type="button" class="ghost" data-idown="${si}|${ii}"${ii<sec.items.length-1?"":" disabled"}>↓ ${T3("Down","Omlaag","Descer")}</button><button type="button" class="ghost badT" data-idel="${si}|${ii}">🗑 ${T3("Delete","Verwijderen","Apagar")}</button></div></div>`;
+  if(it.dial)return `<div class="rRow"><label class="rTask${d?" done":""}"><input type="checkbox" disabled${d?" checked":""} aria-label="${T3("Ticks itself when a shot is on target","Vinkt zichzelf af als een shot op doel is","Fica marcada quando uma extração está no ponto")}"><span>${esc(L(it.t))}${meta||`<small class="rMeta warnT">${T3("Ticks itself when a logged shot is on target","Vinkt zichzelf af als een gelogde shot op doel is","Fica marcada quando uma extração registada está no ponto")}</small>`}</span></label><button type="button" class="rDial" data-godial="1">${d?T3("View","Bekijk","Ver"):T3("Dial in →","Instellen →","Afinar →")}</button>${boss?`<button type="button" class="rPen" data-edit="${it.id}" aria-label="${T3("Edit task","Taak bewerken","Editar tarefa")}">✎</button>`:""}</div>`;
   return `<div class="rRow"><label class="rTask${d?" done":""}"><input type="checkbox" data-c="${it.id}" data-ls="${si}"${d?" checked":""}><span>${esc(L(it.t))}${meta}</span></label>${boss?`<button type="button" class="rPen" data-edit="${it.id}" aria-label="${T3("Edit task","Taak bewerken","Editar tarefa")}">✎</button>`:""}</div>`};
  const list=(sec,si)=>{const d=sec.items.filter(it=>rDone(sec,it)).length,n=sec.items.length,full=n&&d===n,open=rOpen[S.role+sec.id]??(sec.id===cur||boss&&!n);
   const nameEd=boss&&rEditing==="list:"+sec.id;
@@ -970,6 +1048,7 @@ VIEWS.routine=()=>{
  v.onkeydown=e=>{if(e.key!=="Enter")return;const a=e.target.dataset;if(a.new!=null){e.preventDefault();addItem(+a.new)}if(e.target.id==="newSec")$("#addSec").click();if(e.target.closest(".rEdit")&&e.target.tagName==="INPUT"){rEditing=null;rr()}};
  v.onclick=e=>{const b=e.target.closest("button");if(!b)return;const a=b.dataset;
   if(b.id==="rNext"){S.section="path";go();const k=nextLesson();if(k!=null&&S.me)openLesson(S.me,k);return}
+  if(a.godial){S.section="dial";go();return}
   if(a.edit){rEditing=rEditing===a.edit?null:a.edit;return VIEWS.routine()}
   if(a.editlist){rEditing="list:"+a.editlist;rOpen[S.role+a.editlist]=true;return VIEWS.routine()}
   if(a.editdone){rEditing=null;return rr()}
@@ -1151,7 +1230,7 @@ VIEWS.know=()=>{
 /* ---------- several cafés under one owner ----------
    Each café keeps its own copy of the fields below. The open café's copy lives directly on S
    (so every screen keeps working unchanged); switching swaps it with the stored copy. */
-const PER_CAFE=["cafe","machine","grinder","staff","signoff","quiz","menu","menuVer","opts","routines","routinesVer","filter","cleanW","milkSeen","clean","costs","plan","me","bonus"];
+const PER_CAFE=["cafe","machine","grinder","staff","signoff","quiz","menu","menuVer","opts","routines","routinesVer","filter","cleanW","milkSeen","dial","clean","costs","plan","me","bonus"];
 function stashCafe(){if(!S.cafes)return;const c={};PER_CAFE.forEach(k=>{if(S[k]!==undefined)c[k]=S[k]});S.cafes[S.cur]=JSON.parse(JSON.stringify(c))}
 function ensureCafeDefaults(){
  if(!S.machine)S.machine="lm-linea-pb";if(!S.grinder)S.grinder="mk-e65s";if(S.cafe==null)S.cafe="";
@@ -1159,7 +1238,8 @@ function ensureCafeDefaults(){
  if(!Array.isArray(S.menu)){S.menu=DEFAULT_MENU.map(fromTpl);S.menuVer=2}
  if(!S.filter||typeof S.filter!=="object")S.filter={on:false,brewer:"moccamaster",grinder:"ek43"};
  if(!S.opts)S.opts=DEF_OPTS();if(!Array.isArray(S.routines))S.routines=defRoutines();
- if((S.routinesVer||1)<2){if(!S.routines.some(r=>r.id==="hygiene")){const h=defRoutines().find(r=>r.id==="hygiene");if(h){const w=S.routines.findIndex(r=>r.weekly);S.routines.splice(w<0?S.routines.length:w,0,h)}}S.routinesVer=2}
+ if((S.routinesVer||1)<3&&Array.isArray(S.routines)){addDialItem(S.routines);if((S.routinesVer||1)>=2)S.routinesVer=3}
+ if((S.routinesVer||1)<2){if(!S.routines.some(r=>r.id==="hygiene")){const h=defRoutines().find(r=>r.id==="hygiene");if(h){const w=S.routines.findIndex(r=>r.weekly);S.routines.splice(w<0?S.routines.length:w,0,h)}}S.routinesVer=3}
  if(!S.bonus)S.bonus={[WORLD_SK]:0.1};
  // one-time fix: the old americano recipe said water first (that is a long black)
  S.menu.forEach(d=>{if(d.key==="americano"&&Array.isArray(d.steps)&&d.steps[0]&&(d.steps[0].en||d.steps[0])==="Hot water in the cup first."){const t=TEMPLATES.find(x=>x.key==="americano");if(t)d.steps=JSON.parse(JSON.stringify(t.steps))}});
