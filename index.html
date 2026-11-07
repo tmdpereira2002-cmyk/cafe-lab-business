@@ -1478,7 +1478,7 @@ function snapDoc(){stashCafe();const g={};Object.keys(S).forEach(k=>{if(!LOCAL_K
 const docKeys=d=>d?[...Object.keys(d.g||{}).map(k=>"g"+SEP+k),...Object.entries(d.cafes||{}).flatMap(([id,c])=>Object.keys(c||{}).map(k=>"c"+SEP+id+SEP+k))]:[];
 const docGet=(d,key)=>{if(!d)return undefined;const p=key.split(SEP);return p[0]==="g"?(d.g||{})[p[1]]:((d.cafes||{})[p[1]]||{})[p[2]]};
 // mark what changed on this phone since the last sync
-function stamp(local){const now=Date.now(),b=SYNC.base;new Set([...docKeys(local),...docKeys(b)]).forEach(k=>{if(JSON.stringify(docGet(local,k))!==JSON.stringify(docGet(b,k)))SYNC.ts[k]=now});
+function stamp(local,ref){const now=Date.now(),b=ref===undefined?SYNC.base:ref;new Set([...docKeys(local),...docKeys(b)]).forEach(k=>{if(JSON.stringify(docGet(local,k))!==JSON.stringify(docGet(b,k)))SYNC.ts[k]=now});
  if(b)Object.keys(b.cafes||{}).forEach(id=>{if(!local.cafes[id])SYNC.ts["del"+SEP+id]=now});Object.keys(local.cafes).forEach(id=>{if(!b||!(b.cafes||{})[id])SYNC.ts["new"+SEP+id]=now})}
 const pk=v=>String(v||"").replace(/W(\d)$/,"W0$1");
 const atOf=v=>v&&typeof v==="object"?(v.at||0):(v?1:0);
@@ -1512,11 +1512,12 @@ async function push(){if(pushing){again=true;return}pushing=true;syncState="savi
  try{const C=await cloudReady();const local=snapDoc();stamp(local);let m=null;
   try{await C.transact(cur=>{const R=parseRemote(cur);m=R?mergeDocs(local,SYNC.ts,R.doc,R.ts):{doc:local,ts:{...SYNC.ts}};return docFields(m)})}
   catch(e){m=SYNC.base?mergeDocs(local,SYNC.ts,SYNC.base,{}):{doc:local,ts:{...SYNC.ts}};try{await C.put(docFields(m))}catch(x){}syncState=navigator.onLine?"error":"offline"}
-  if(m){SYNC={base:m.doc,ts:m.ts};keepSync();applyDoc(m.doc)}if(syncState==="saving")syncState="ok"}catch(e){syncState=navigator.onLine?"error":"offline"}
+  // anything changed on this phone while the save was on its way must win over the saved copy
+  if(m){const cur=snapDoc(),changed=JSON.stringify(cur)!==JSON.stringify(local);SYNC={base:m.doc,ts:{...m.ts}};if(changed){stamp(cur,local);const m2=mergeDocs(cur,SYNC.ts,m.doc,m.ts);SYNC.ts=m2.ts;keepSync();applyDoc(m2.doc);again=true}else{keepSync();applyDoc(m.doc)}}if(syncState==="saving")syncState="ok"}catch(e){syncState=navigator.onLine?"error":"offline"}
  pushing=false;paintSync();if(again){again=false;push()}}
 function onRemote(r,pending){if(pending)return;const R=parseRemote(r);if(!R)return;if(R.by===DEV&&R.at===lastWrite)return;
  const local=snapDoc();stamp(local);const m=mergeDocs(local,SYNC.ts,R.doc,R.ts);const localNewer=JSON.stringify(m.doc)!==JSON.stringify(R.doc);
- SYNC={base:R.doc,ts:m.ts};keepSync();applyDoc(m.doc);syncState="ok";paintSync();if(localNewer)cloudSave()}
+ SYNC={base:R.doc,ts:{...m.ts}};keepSync();applyDoc(m.doc);syncState="ok";paintSync();if(localNewer)cloudSave()}
 let localOnlySave=()=>{};
 {const _save=save;localOnlySave=()=>{S.savedAt=Date.now();_save()};save=()=>{if(!ACCOUNT.uid)return;S.savedAt=Date.now();_save();cloudSave()}}
 function paintSync(){const el=$("#syncDot");if(!el)return;el.className="syncDot "+syncState;el.title=syncState==="ok"?loginT("Synced with your team","Gesynchroniseerd met je team"):syncState==="offline"?loginT("Offline: changes sync when you're back online","Offline: wijzigingen worden gesynchroniseerd zodra je weer online bent"):syncState==="saving"?loginT("Syncing…","Synchroniseren…"):loginT("Couldn't sync yet; it will try again","Nog niet gesynchroniseerd; het wordt opnieuw geprobeerd")}
